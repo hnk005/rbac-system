@@ -7,8 +7,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springboot.rbacsystem.dto.PermissionDto;
 import org.springboot.rbacsystem.dto.RoleDto;
-import org.springboot.rbacsystem.entity.Permission;
-import org.springboot.rbacsystem.entity.Role;
+import org.springboot.rbacsystem.entity.PermissionEntity;
+import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.mapper.permission.PermissionMapper;
 import org.springboot.rbacsystem.mapper.permission.PermissionMapperImpl;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
@@ -39,25 +39,25 @@ public class PermissionMapperTest {
 	@Test
 	void testToDto() {
 		// arrange
-		Role role1 = createRole(1L, "ROLE_USER");
-		Role role2 = createRole(2L, "ROLE_ADMIN");
-		Set<Role> roles = new LinkedHashSet<>(List.of(role1, role2));
+		RoleEntity roleEntity1 = createRole(1L, "ROLE_USER");
+		RoleEntity roleEntity2 = createRole(2L, "ROLE_ADMIN");
+		Set<RoleEntity> roleEntities = new LinkedHashSet<>(List.of(roleEntity1, roleEntity2));
 		
-		RoleDto roleDto1 = createRoleDto(role1.getId(), role1.getName());
-		RoleDto roleDto2 = createRoleDto(role2.getId(), role2.getName());
+		RoleDto roleDto1 = createRoleDto(roleEntity1.getId(), roleEntity1.getName());
+		RoleDto roleDto2 = createRoleDto(roleEntity2.getId(), roleEntity2.getName());
 		
-		when(roleMapper.toDto(role1)).thenReturn(roleDto1);
-		when(roleMapper.toDto(role2)).thenReturn(roleDto2);
+		when(roleMapper.toDto(roleEntity1)).thenReturn(roleDto1);
+		when(roleMapper.toDto(roleEntity2)).thenReturn(roleDto2);
 		
-		Permission permissionEntity = createPermission(roles);
+		PermissionEntity permissionEntity = createPermission(roleEntities);
 		
 		PermissionDto expectedPermissionDto = new PermissionDto();
 		expectedPermissionDto.setId(permissionEntity.getId());
 		expectedPermissionDto.setName(permissionEntity.getName());
 		expectedPermissionDto.setRoles(permissionEntity.getRoles()
-		                                            .stream()
-		                                            .map(roleMapper::toDto)
-		                                            .collect(Collectors.toList()));
+		                                               .stream()
+		                                               .map(roleMapper::toDto)
+		                                               .collect(Collectors.toList()));
 		
 		// act
 		PermissionDto actualPermissionDto = permissionMapper.toDto(permissionEntity);
@@ -75,30 +75,30 @@ public class PermissionMapperTest {
 		permissionDto.setDes("Can read user information");
 		permissionDto.setRoles(List.of(createRoleDto(1L, "ROLE_USER")));
 		
-		Permission expectedPermissionEntity = new Permission();
-		expectedPermissionEntity.setId(permissionDto.getId());
-		expectedPermissionEntity.setName(permissionDto.getName());
+		PermissionEntity expectedPermissionEntityEntity = new PermissionEntity();
+		expectedPermissionEntityEntity.setId(permissionDto.getId());
+		expectedPermissionEntityEntity.setName(permissionDto.getName());
 		
 		// act
-		Permission actualPermissionEntity = permissionMapper.toEntity(permissionDto);
+		PermissionEntity actualPermissionEntityEntity = permissionMapper.toEntity(permissionDto);
 		
 		// assert
-		assertEquals(expectedPermissionEntity, actualPermissionEntity);
+		assertEquals(expectedPermissionEntityEntity, actualPermissionEntityEntity);
 	}
 	
-	private Permission createPermission(Set<Role> roles) {
-		Permission permission = new Permission();
-		permission.setId(PERMISSION_ID);
-		permission.setName(PERMISSION_NAME);
-		permission.setRoles(roles);
-		return permission;
+	private PermissionEntity createPermission(Set<RoleEntity> roleEntities) {
+		PermissionEntity permissionEntity = new PermissionEntity();
+		permissionEntity.setId(PERMISSION_ID);
+		permissionEntity.setName(PERMISSION_NAME);
+		permissionEntity.setRoles(roleEntities);
+		return permissionEntity;
 	}
 	
-	private Role createRole(Long id, String name) {
-		Role role = new Role();
-		role.setId(id);
-		role.setName(name);
-		return role;
+	private RoleEntity createRole(Long id, String name) {
+		RoleEntity roleEntity = new RoleEntity();
+		roleEntity.setId(id);
+		roleEntity.setName(name);
+		return roleEntity;
 	}
 	
 	private RoleDto createRoleDto(Long id, String name) {

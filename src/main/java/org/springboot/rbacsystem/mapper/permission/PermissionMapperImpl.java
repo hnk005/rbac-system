@@ -2,7 +2,7 @@ package org.springboot.rbacsystem.mapper.permission;
 
 import lombok.AllArgsConstructor;
 import org.springboot.rbacsystem.dto.PermissionDto;
-import org.springboot.rbacsystem.entity.Permission;
+import org.springboot.rbacsystem.entity.PermissionEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ public class PermissionMapperImpl implements PermissionMapper {
 	private final RoleMapper roleMapper;
 	
 	@Override
-	public PermissionDto toDto(Permission permissionEntity) {
+	public PermissionDto toDto(PermissionEntity permissionEntity) {
 		if (permissionEntity == null) {
 			return null;
 		}
@@ -30,12 +30,12 @@ public class PermissionMapperImpl implements PermissionMapper {
 	}
 	
 	@Override
-	public Permission toEntity(PermissionDto permissionDto) {
+	public PermissionEntity toEntity(PermissionDto permissionDto) {
 		if (permissionDto == null) {
 			return null;
 		}
 		
-		Permission permissionEntity = new Permission();
+		PermissionEntity permissionEntity = new PermissionEntity();
 		permissionEntity.setId(permissionDto.getId());
 		permissionEntity.setName(permissionDto.getName());
 		

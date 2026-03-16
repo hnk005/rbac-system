@@ -1,4 +1,4 @@
-package org.springboot.rbacsystem.helper;
+package org.springboot.rbacsystem.entity;
 
 
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @MappedSuperclass
-public class EntityIdAutoIncrement {
+public class BaseEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

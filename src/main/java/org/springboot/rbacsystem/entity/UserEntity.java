@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springboot.rbacsystem.helper.EntityIdAutoIncrement;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class User extends EntityIdAutoIncrement {
+public class UserEntity extends BaseEntity {
 	
 	@Column(length = 50, nullable = false, unique = true)
 	private String username;
@@ -35,5 +34,5 @@ public class User extends EntityIdAutoIncrement {
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id")
 	)
-	private Set<Role> roles = new HashSet<>();
+	private Set<RoleEntity> roles = new HashSet<>();
 }

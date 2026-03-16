@@ -2,12 +2,12 @@ package org.springboot.rbacsystem.mapper.permission;
 
 import org.mapstruct.Mapper;
 import org.springboot.rbacsystem.dto.PermissionDto;
-import org.springboot.rbacsystem.entity.Permission;
+import org.springboot.rbacsystem.entity.PermissionEntity;
 
 @Mapper
 public interface PermissionMapper {
-	PermissionDto toDto(Permission permissionEntity);
+	PermissionDto toDto(PermissionEntity permissionEntity);
 	
-	Permission toEntity(PermissionDto permissionDto);
+	PermissionEntity toEntity(PermissionDto permissionDto);
 }
 

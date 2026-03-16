@@ -1,13 +1,10 @@
 package org.springboot.rbacsystem.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springboot.rbacsystem.helper.EntityIdAutoIncrement;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,13 +14,22 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class Permission extends EntityIdAutoIncrement {
+public class RoleEntity extends BaseEntity {
+	
 	@Column(length = 50, nullable = false, unique = true)
 	private String name;
 	
 	@Column(name = "description")
 	private String des;
 	
-	@ManyToMany(mappedBy = "permissions")
-	private Set<Role> roles = new HashSet<>();
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "role_permission",
+			joinColumns = @JoinColumn(name = "role_id"),
+			inverseJoinColumns = @JoinColumn(name = "permission_id")
+	)
+	private Set<PermissionEntity> permissions = new HashSet<>();
+	
+	@ManyToMany(mappedBy = "roles")
+	private Set<UserEntity> users = new HashSet<>();
 }

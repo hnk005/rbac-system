@@ -2,7 +2,7 @@ package org.springboot.rbacsystem.mapper.user;
 
 import lombok.AllArgsConstructor;
 import org.springboot.rbacsystem.dto.UserDto;
-import org.springboot.rbacsystem.entity.User;
+import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ public class UserMapperImpl implements UserMapper {
 	private final RoleMapper roleMapper;
 	
 	@Override
-	public UserDto toDto(User userEntity) {
+	public UserDto toDto(UserEntity userEntity) {
 		if (userEntity == null) {
 			return null;
 		}
@@ -40,12 +40,12 @@ public class UserMapperImpl implements UserMapper {
 	}
 	
 	@Override
-	public User toEntity(UserDto userDto) {
+	public UserEntity toEntity(UserDto userDto) {
 		if (userDto == null) {
 			return null;
 		}
 		
-		User userEntity = new User();
+		UserEntity userEntity = new UserEntity();
 		userEntity.setId(userDto.getId());
 		userEntity.setUsername(userDto.getUsername());
 		userEntity.setFullName(userDto.getFullName());

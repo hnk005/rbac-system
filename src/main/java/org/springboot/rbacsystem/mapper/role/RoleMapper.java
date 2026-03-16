@@ -2,12 +2,12 @@ package org.springboot.rbacsystem.mapper.role;
 
 import org.mapstruct.Mapper;
 import org.springboot.rbacsystem.dto.RoleDto;
-import org.springboot.rbacsystem.entity.Role;
+import org.springboot.rbacsystem.entity.RoleEntity;
 
 @Mapper
 public interface RoleMapper {
-	RoleDto toDto(Role roleEntity);
+	RoleDto toDto(RoleEntity roleEntity);
 	
-	Role toEntity(RoleDto roleDto);
+	RoleEntity toEntity(RoleDto roleDto);
 }
 

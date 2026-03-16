@@ -7,8 +7,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springboot.rbacsystem.dto.RoleDto;
 import org.springboot.rbacsystem.dto.UserDto;
-import org.springboot.rbacsystem.entity.Role;
-import org.springboot.rbacsystem.entity.User;
+import org.springboot.rbacsystem.entity.RoleEntity;
+import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapperImpl;
@@ -42,21 +42,21 @@ public class UserMapperTest {
 	@Test
 	void testToDto() {
 		// arrange
-		Role role1 = createRole(1L, "ROLE_USER");
-		Role role2 = createRole(2L, "ROLE_ADMIN");
-		Set<Role> roles = Set.of(role1, role2);
+		RoleEntity roleEntity1 = createRole(1L, "ROLE_USER");
+		RoleEntity roleEntity2 = createRole(2L, "ROLE_ADMIN");
+		Set<RoleEntity> roleEntities = Set.of(roleEntity1, roleEntity2);
 		
-		RoleDto roleDto1 = createRoleDto(role1.getId(), role1.getName());
-		RoleDto roleDto2 = createRoleDto(role2.getId(), role2.getName());
+		RoleDto roleDto1 = createRoleDto(roleEntity1.getId(), roleEntity1.getName());
+		RoleDto roleDto2 = createRoleDto(roleEntity2.getId(), roleEntity2.getName());
 		
-		when(roleMapper.toDto(role1)).thenReturn(roleDto1);
-		when(roleMapper.toDto(role2)).thenReturn(roleDto2);
+		when(roleMapper.toDto(roleEntity1)).thenReturn(roleDto1);
+		when(roleMapper.toDto(roleEntity2)).thenReturn(roleDto2);
 		
-		User userEntity = createUser(roles);
+		UserEntity userEntity = createUser(roleEntities);
 		
-		UserDto expectedUserDto = createUserDto(roles.stream()
-		                                           .map(roleMapper::toDto)
-		                                           .collect(Collectors.toList()));
+		UserDto expectedUserDto = createUserDto(roleEntities.stream()
+		                                                    .map(roleMapper::toDto)
+		                                                    .collect(Collectors.toList()));
 		
 		// act
 		UserDto userDto = userMapper.toDto(userEntity);
@@ -72,30 +72,30 @@ public class UserMapperTest {
 		RoleDto roleDto2 = createRoleDto(2L, "ROLE_ADMIN");
 		List<RoleDto> roleDtos = List.of(roleDto1, roleDto2);
 		
-		Role role1 = createRole(roleDto1.getId(), roleDto1.getName());
-		Role role2 = createRole(roleDto2.getId(), roleDto2.getName());
+		RoleEntity roleEntity1 = createRole(roleDto1.getId(), roleDto1.getName());
+		RoleEntity roleEntity2 = createRole(roleDto2.getId(), roleDto2.getName());
 		
-		when(roleMapper.toEntity(roleDto1)).thenReturn(role1);
-		when(roleMapper.toEntity(roleDto2)).thenReturn(role2);
+		when(roleMapper.toEntity(roleDto1)).thenReturn(roleEntity1);
+		when(roleMapper.toEntity(roleDto2)).thenReturn(roleEntity2);
 		
 		UserDto userDto = createUserDto(roleDtos);
 		
-		User expectedUserEntity = createUser(roleDtos.stream()
-		                                    .map(roleMapper::toEntity)
-		                                    .collect(Collectors.toSet()));
+		UserEntity expectedUserEntityEntity = createUser(roleDtos.stream()
+		                                                         .map(roleMapper::toEntity)
+		                                                         .collect(Collectors.toSet()));
 		
 		// act
-		User userEntity = userMapper.toEntity(userDto);
+		UserEntity userEntity = userMapper.toEntity(userDto);
 		
 		// assert
-		assertEquals(expectedUserEntity, userEntity);
+		assertEquals(expectedUserEntityEntity, userEntity);
 	}
 	
-	private Role createRole(Long id, String name) {
-		Role role = new Role();
-		role.setId(id);
-		role.setName(name);
-		return role;
+	private RoleEntity createRole(Long id, String name) {
+		RoleEntity roleEntity = new RoleEntity();
+		roleEntity.setId(id);
+		roleEntity.setName(name);
+		return roleEntity;
 	}
 	
 	private RoleDto createRoleDto(Long id, String name) {
@@ -105,15 +105,15 @@ public class UserMapperTest {
 		return roleDto;
 	}
 	
-	private User createUser(Set<Role> roles) {
-		User user = new User();
-		user.setId(USER_ID);
-		user.setUsername(USERNAME);
-		user.setEmail(EMAIL);
-		user.setPassword(PASSWORD);
-		user.setFullName(FULL_NAME);
-		user.setRoles(roles);
-		return user;
+	private UserEntity createUser(Set<RoleEntity> roleEntities) {
+		UserEntity userEntity = new UserEntity();
+		userEntity.setId(USER_ID);
+		userEntity.setUsername(USERNAME);
+		userEntity.setEmail(EMAIL);
+		userEntity.setPassword(PASSWORD);
+		userEntity.setFullName(FULL_NAME);
+		userEntity.setRoles(roleEntities);
+		return userEntity;
 	}
 	
 	private UserDto createUserDto(List<RoleDto> roleDtos) {

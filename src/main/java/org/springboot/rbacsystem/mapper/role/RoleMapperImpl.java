@@ -2,7 +2,7 @@ package org.springboot.rbacsystem.mapper.role;
 
 import lombok.AllArgsConstructor;
 import org.springboot.rbacsystem.dto.RoleDto;
-import org.springboot.rbacsystem.entity.Role;
+import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.mapper.permission.PermissionMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapper;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class RoleMapperImpl implements RoleMapper {
 	private final UserMapper userMapper;
 	
 	@Override
-	public RoleDto toDto(Role roleEntity) {
+	public RoleDto toDto(RoleEntity roleEntity) {
 		if (roleEntity == null) {
 			return null;
 		}
@@ -40,12 +40,12 @@ public class RoleMapperImpl implements RoleMapper {
 	}
 	
 	@Override
-	public Role toEntity(RoleDto roleDto) {
+	public RoleEntity toEntity(RoleDto roleDto) {
 		if (roleDto == null) {
 			return null;
 		}
 		
-		Role roleEntity = new Role();
+		RoleEntity roleEntity = new RoleEntity();
 		roleEntity.setId(roleDto.getId());
 		roleEntity.setName(roleDto.getName());
 		roleEntity.setPermissions(roleDto
