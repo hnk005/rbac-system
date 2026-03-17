@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@Table(name = "roles")
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class RoleEntity extends BaseEntity {
@@ -27,4 +28,7 @@ public class RoleEntity extends BaseEntity {
 			inverseJoinColumns = @JoinColumn(name = "permission_id")
 	)
 	private Set<PermissionEntity> permissions = new HashSet<>();
+	
+	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+	private Set<UserEntity> users = new HashSet<>();
 }

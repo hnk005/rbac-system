@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@Table(name = "users")
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class UserEntity extends BaseEntity {
