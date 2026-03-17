@@ -4,7 +4,6 @@ import org.springboot.rbacsystem.dto.UserDto;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 @Component
 public class UserMapperImpl implements UserMapper {
 	
-	@Lazy
 	@Autowired
 	private RoleMapper roleMapper;
 	

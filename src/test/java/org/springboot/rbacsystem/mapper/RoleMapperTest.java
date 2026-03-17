@@ -13,7 +13,6 @@ import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.permission.PermissionMapper;
 import org.springboot.rbacsystem.mapper.role.RoleMapperImpl;
-import org.springboot.rbacsystem.mapper.user.UserMapper;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,9 +31,6 @@ public class RoleMapperTest {
 	@Mock
 	private PermissionMapper permissionMapper;
 	
-	@Mock
-	private UserMapper userMapper;
-	
 	@InjectMocks
 	private RoleMapperImpl roleMapper;
 	
@@ -46,21 +42,13 @@ public class RoleMapperTest {
 		PermissionEntity permissionEntity2 = createPermission(2L, "WRITE_USER");
 		Set<PermissionEntity> permissionEntities = new LinkedHashSet<>(List.of(permissionEntity1, permissionEntity2));
 		
-		UserEntity userEntity1 = createUser(1L, "admin");
-		UserEntity userEntity2 = createUser(2L, "manager");
-		Set<UserEntity> userEntities = new LinkedHashSet<>(List.of(userEntity1, userEntity2));
-		
 		PermissionDto permissionDto1 = createPermissionDto(permissionEntity1.getId(), permissionEntity1.getName());
 		PermissionDto permissionDto2 = createPermissionDto(permissionEntity2.getId(), permissionEntity2.getName());
-		UserDto userDto1 = createUserDto(userEntity1.getId(), userEntity1.getUsername());
-		UserDto userDto2 = createUserDto(userEntity2.getId(), userEntity2.getUsername());
 		
 		when(permissionMapper.toDto(permissionEntity1)).thenReturn(permissionDto1);
 		when(permissionMapper.toDto(permissionEntity2)).thenReturn(permissionDto2);
-		when(userMapper.toDto(userEntity1)).thenReturn(userDto1);
-		when(userMapper.toDto(userEntity2)).thenReturn(userDto2);
 		
-		RoleEntity roleEntity = createRole(permissionEntities, userEntities);
+		RoleEntity roleEntity = createRole(permissionEntities);
 		
 		RoleDto expectedRoleDto = new RoleDto();
 		expectedRoleDto.setId(roleEntity.getId());
@@ -69,11 +57,6 @@ public class RoleMapperTest {
 		                                         .stream()
 		                                         .map(permissionMapper::toDto)
 		                                         .collect(Collectors.toList()));
-		expectedRoleDto.setUsers(roleEntity.getUsers()
-		                                   .stream()
-		                                   .map(userMapper::toDto)
-		                                   .collect(Collectors.toList()));
-		
 		// act
 		RoleDto actualRoleDto = roleMapper.toDto(roleEntity);
 		
@@ -114,12 +97,11 @@ public class RoleMapperTest {
 		assertEquals(expectedRoleEntityEntity, actualRoleEntityEntity);
 	}
 	
-	private RoleEntity createRole(Set<PermissionEntity> permissionEntities, Set<UserEntity> userEntities) {
+	private RoleEntity createRole(Set<PermissionEntity> permissionEntities) {
 		RoleEntity roleEntity = new RoleEntity();
 		roleEntity.setId(ROLE_ID);
 		roleEntity.setName(ROLE_NAME);
 		roleEntity.setPermissions(permissionEntities);
-		roleEntity.setUsers(userEntities);
 		return roleEntity;
 	}
 	

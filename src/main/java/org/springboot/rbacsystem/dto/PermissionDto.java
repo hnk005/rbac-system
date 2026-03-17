@@ -8,8 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @RequiredArgsConstructor
@@ -27,7 +25,4 @@ public class PermissionDto {
 	@JsonProperty(value = "description")
 	@Max(255)
 	private String des;
-	
-	@JsonProperty(value = "permission_roles", access = JsonProperty.Access.READ_ONLY)
-	private List<RoleDto> roles;
 }

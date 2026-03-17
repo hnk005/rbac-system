@@ -30,7 +30,4 @@ public class RoleDto {
 	
 	@JsonProperty(value = "role_permissions")
 	private List<PermissionDto> permissions;
-	
-	@JsonProperty(value = "role_users", access = JsonProperty.Access.READ_ONLY)
-	private List<UserDto> users;
 }

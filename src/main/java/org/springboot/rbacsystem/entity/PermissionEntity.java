@@ -2,13 +2,9 @@ package org.springboot.rbacsystem.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @Entity
@@ -20,7 +16,4 @@ public class PermissionEntity extends BaseEntity {
 	
 	@Column(name = "description")
 	private String des;
-	
-	@ManyToMany(mappedBy = "permissions")
-	private Set<RoleEntity> roles = new HashSet<>();
 }
