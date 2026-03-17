@@ -1,15 +1,14 @@
-package org.springboot.rbacsystem;
+package org.springboot.rbacsystem.mapper;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springboot.rbacsystem.dto.PermissionDto;
 import org.springboot.rbacsystem.dto.RoleDto;
 import org.springboot.rbacsystem.entity.PermissionEntity;
 import org.springboot.rbacsystem.entity.RoleEntity;
-import org.springboot.rbacsystem.mapper.permission.PermissionMapper;
 import org.springboot.rbacsystem.mapper.permission.PermissionMapperImpl;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 
@@ -27,14 +26,12 @@ public class PermissionMapperTest {
 	private static final Long PERMISSION_ID = 1L;
 	private static final String PERMISSION_NAME = "READ_USER";
 	
+	@Mock
 	private RoleMapper roleMapper;
-	private PermissionMapper permissionMapper;
 	
-	@BeforeEach
-	void setUp() {
-		roleMapper = Mockito.mock(RoleMapper.class);
-		permissionMapper = new PermissionMapperImpl(roleMapper);
-	}
+	@InjectMocks
+	private PermissionMapperImpl permissionMapper;
+	
 	
 	@Test
 	void testToDto() {

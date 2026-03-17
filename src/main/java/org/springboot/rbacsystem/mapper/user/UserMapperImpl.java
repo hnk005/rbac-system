@@ -1,18 +1,20 @@
 package org.springboot.rbacsystem.mapper.user;
 
-import lombok.AllArgsConstructor;
 import org.springboot.rbacsystem.dto.UserDto;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
-@AllArgsConstructor
 public class UserMapperImpl implements UserMapper {
 	
-	private final RoleMapper roleMapper;
+	@Lazy
+	@Autowired
+	private RoleMapper roleMapper;
 	
 	@Override
 	public UserDto toDto(UserEntity userEntity) {

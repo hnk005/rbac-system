@@ -1,16 +1,18 @@
 package org.springboot.rbacsystem.mapper.permission;
 
-import lombok.AllArgsConstructor;
 import org.springboot.rbacsystem.dto.PermissionDto;
 import org.springboot.rbacsystem.entity.PermissionEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
 public class PermissionMapperImpl implements PermissionMapper {
 	
-	private final RoleMapper roleMapper;
+	@Lazy
+	@Autowired
+	private RoleMapper roleMapper;
 	
 	@Override
 	public PermissionDto toDto(PermissionEntity permissionEntity) {

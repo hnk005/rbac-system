@@ -1,9 +1,9 @@
-package org.springboot.rbacsystem;
+package org.springboot.rbacsystem.mapper;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springboot.rbacsystem.dto.PermissionDto;
 import org.springboot.rbacsystem.dto.RoleDto;
@@ -12,7 +12,6 @@ import org.springboot.rbacsystem.entity.PermissionEntity;
 import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.permission.PermissionMapper;
-import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springboot.rbacsystem.mapper.role.RoleMapperImpl;
 import org.springboot.rbacsystem.mapper.user.UserMapper;
 
@@ -30,16 +29,15 @@ public class RoleMapperTest {
 	private static final Long ROLE_ID = 1L;
 	private static final String ROLE_NAME = "ROLE_ADMIN";
 	
+	@Mock
 	private PermissionMapper permissionMapper;
-	private UserMapper userMapper;
-	private RoleMapper roleMapper;
 	
-	@BeforeEach
-	void setUp() {
-		permissionMapper = Mockito.mock(PermissionMapper.class);
-		userMapper = Mockito.mock(UserMapper.class);
-		roleMapper = new RoleMapperImpl(permissionMapper, userMapper);
-	}
+	@Mock
+	private UserMapper userMapper;
+	
+	@InjectMocks
+	private RoleMapperImpl roleMapper;
+	
 	
 	@Test
 	void testToDto() {

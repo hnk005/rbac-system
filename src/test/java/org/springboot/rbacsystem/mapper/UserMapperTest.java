@@ -1,16 +1,15 @@
-package org.springboot.rbacsystem;
+package org.springboot.rbacsystem.mapper;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springboot.rbacsystem.dto.RoleDto;
 import org.springboot.rbacsystem.dto.UserDto;
 import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
-import org.springboot.rbacsystem.mapper.user.UserMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapperImpl;
 
 import java.util.List;
@@ -29,15 +28,11 @@ public class UserMapperTest {
 	private static final String PASSWORD = "password";
 	private static final String FULL_NAME = "Test User";
 	
+	@Mock
 	private RoleMapper roleMapper;
 	
-	private UserMapper userMapper;
-	
-	@BeforeEach
-	void setUp() {
-		roleMapper = Mockito.mock(RoleMapper.class);
-		userMapper = new UserMapperImpl(roleMapper);
-	}
+	@InjectMocks
+	private UserMapperImpl userMapper;
 	
 	@Test
 	void testToDto() {
