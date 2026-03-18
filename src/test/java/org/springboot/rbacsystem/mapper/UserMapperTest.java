@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,6 +79,52 @@ public class UserMapperTest {
 		UserEntity expectedUserEntityEntity = createUser(roleDtos.stream()
 		                                                         .map(roleMapper::toEntity)
 		                                                         .collect(Collectors.toSet()));
+		
+		// act
+		UserEntity userEntity = userMapper.toEntity(userDto);
+		
+		// assert
+		assertEquals(expectedUserEntityEntity, userEntity);
+	}
+	
+	@Test
+	public void testToDto_NullUserEntity() {
+		// act
+		UserDto userDto = userMapper.toDto(null);
+		
+		// assert
+		assertNull(userDto);
+	}
+	
+	@Test
+	public void testToEntity_NullUserDto() {
+		// act
+		UserEntity userEntity = userMapper.toEntity(null);
+		
+		// assert
+		assertNull(userEntity);
+	}
+	
+	@Test
+	public void testToDto_EmptyRoles() {
+		// arrange
+		UserEntity userEntity = createUser(Set.of());
+		
+		UserDto expectedUserDto = createUserDto(List.of());
+		
+		// act
+		UserDto userDto = userMapper.toDto(userEntity);
+		
+		// assert
+		assertEquals(expectedUserDto, userDto);
+	}
+	
+	@Test
+	public void testToEntity_EmptyRoles() {
+		// arrange
+		UserDto userDto = createUserDto(List.of());
+		
+		UserEntity expectedUserEntityEntity = createUser(Set.of());
 		
 		// act
 		UserEntity userEntity = userMapper.toEntity(userDto);

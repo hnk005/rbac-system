@@ -23,11 +23,13 @@ public class RoleMapperImpl implements RoleMapper {
 		RoleDto roleDto = new RoleDto();
 		roleDto.setId(roleEntity.getId());
 		roleDto.setName(roleEntity.getName());
-		roleDto.setPermissions(roleEntity
-				.getPermissions()
-				.stream()
-				.map(permissionMapper::toDto)
-				.toList());
+		
+		if (roleEntity.getPermissions() != null) {
+			roleDto.setPermissions(roleEntity.getPermissions()
+			                                 .stream()
+			                                 .map(permissionMapper::toDto)
+			                                 .collect(Collectors.toList()));
+		}
 		
 		return roleDto;
 	}
@@ -41,11 +43,13 @@ public class RoleMapperImpl implements RoleMapper {
 		RoleEntity roleEntity = new RoleEntity();
 		roleEntity.setId(roleDto.getId());
 		roleEntity.setName(roleDto.getName());
-		roleEntity.setPermissions(roleDto
-				.getPermissions()
-				.stream()
-				.map(permissionMapper::toEntity)
-				.collect(Collectors.toSet()));
+		
+		if (roleDto.getPermissions() != null) {
+			roleEntity.setPermissions(roleDto.getPermissions()
+			                                 .stream()
+			                                 .map(permissionMapper::toEntity)
+			                                 .collect(Collectors.toSet()));
+		}
 		
 		return roleEntity;
 	}
