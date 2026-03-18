@@ -27,13 +27,12 @@ public class UserMapperImpl implements UserMapper {
 		userDto.setEmail(userEntity.getEmail());
 		userDto.setPassword(userEntity.getPassword());
 		
-		if (!userEntity.getRoles()
-		               .isEmpty()) {
+		if (userEntity.getRoles() != null) {
 			userDto.setRoles(userEntity
 					.getRoles()
 					.stream()
 					.map(roleMapper::toDto)
-					.toList());
+					.collect(Collectors.toList()));
 		}
 		
 		return userDto;
@@ -52,8 +51,7 @@ public class UserMapperImpl implements UserMapper {
 		userEntity.setEmail(userDto.getEmail());
 		userEntity.setPassword(userDto.getPassword());
 		
-		if (!userDto.getRoles()
-		            .isEmpty()) {
+		if (userDto.getRoles() != null) {
 			userEntity.setRoles(userDto.getRoles()
 			                           .stream()
 			                           .map(roleMapper::toEntity)

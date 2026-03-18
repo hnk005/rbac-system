@@ -18,13 +18,13 @@ public class UserEntity extends BaseEntity {
 	@Column(length = 50, nullable = false, unique = true)
 	private String username;
 	
-	@Column(length = 64, nullable = false)
+	@Column(length = 60, nullable = false)
 	private String password;
 	
-	@Column(name = "full_name", length = 50, nullable = false)
+	@Column(name = "full_name", length = 100, nullable = false)
 	private String fullName;
 	
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, unique = true, length = 100)
 	private String email;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
