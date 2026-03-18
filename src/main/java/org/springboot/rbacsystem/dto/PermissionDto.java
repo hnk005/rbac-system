@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public class PermissionDto {
 	
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY, index = 1)
+	@JsonProperty(index = 1)
 	private Long id;
 	
 	@JsonProperty(required = true)

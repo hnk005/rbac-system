@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class RoleDto {
 	
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY, index = 1)
+	@JsonProperty(index = 1)
 	private Long id;
 	
 	@JsonProperty(required = true)
