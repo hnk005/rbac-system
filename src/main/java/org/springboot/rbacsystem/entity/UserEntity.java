@@ -29,7 +29,7 @@ public class UserEntity extends BaseEntity {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-			name = "user_role",
+			name = "user_roles",
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id")
 	)
