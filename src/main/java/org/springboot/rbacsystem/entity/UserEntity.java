@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +29,7 @@ public class UserEntity extends BaseEntity {
 	@Column(nullable = false, unique = true, length = 100)
 	private String email;
 	
+	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
 	@JoinTable(

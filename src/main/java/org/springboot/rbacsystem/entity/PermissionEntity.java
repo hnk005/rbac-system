@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +21,8 @@ public class PermissionEntity extends BaseEntity {
 	@Column(name = "description")
 	private String des;
 	
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	@ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
 	Set<RoleEntity> roles = new HashSet<>();
 }

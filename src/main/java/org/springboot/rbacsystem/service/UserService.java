@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.SQLGrammarException;
 import org.springboot.rbacsystem.dto.CreateUserDto;
 import org.springboot.rbacsystem.dto.RoleDto;
+import org.springboot.rbacsystem.dto.UpdateUserDto;
+import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapper;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,18 +55,19 @@ public class UserService {
 			throw new IllegalArgumentException("Dto cannot be null");
 		}
 		
-		UserEntity existEmail = repository.findByEmail(dto.getEmail());
-		if (existEmail != null) {
+		UserEntity userEntity = repository.findByEmail(dto.getEmail());
+		if (userEntity != null) {
 			throw new IllegalArgumentException("Email already exists");
 		}
 		
-		String uniqueUsername = generateUniqueUsername(dto.getEmail());
-		dto.setUsername(uniqueUsername);
+		userEntity = mapper.fromCreate(dto);
 		
-		String passwordHash = encoder.encode(dto.getPassword());
-		dto.setPassword(passwordHash);
+		String uniqueUsername = generateUniqueUsername(userEntity.getEmail());
+		userEntity.setUsername(uniqueUsername);
 		
-		UserEntity userEntity = mapper.fromCreate(dto);
+		String passwordHash = encoder.encode(userEntity.getPassword());
+		userEntity.setPassword(passwordHash);
+		
 		
 		if (dto.getRoleIds() != null && !dto.getRoleIds()
 		                                    .isEmpty()) {
@@ -73,6 +77,60 @@ public class UserService {
 			if (roles.isEmpty() || roles.size() != roleIds.size()) {
 				throw new IllegalArgumentException("No valid roles found for the provided role IDs");
 			}
+			
+			userEntity.addRoles(roles.stream()
+			                         .map(roleMapper::toEntity)
+			                         .collect(Collectors.toSet()));
+		}
+		
+		repository.save(userEntity);
+		return "Success";
+	}
+	
+	@Transactional
+	public String update(Long id, UpdateUserDto dto) throws IllegalArgumentException {
+		UserEntity userEntity = repository.findById(id)
+		                                  .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+		
+		if (dto.getEmail() != null && !dto.getEmail()
+		                                  .equals(userEntity.getEmail())) {
+			UserEntity existEmail = repository.findByEmail(dto.getEmail());
+			if (existEmail != null) {
+				throw new IllegalArgumentException("Email already exists");
+			}
+			userEntity.setEmail(dto.getEmail());
+		}
+		
+		if (dto.getPassword() != null) {
+			String passwordHash = encoder.encode(dto.getPassword());
+			userEntity.setPassword(passwordHash);
+		}
+		
+		if (dto.getFullName() != null) {
+			userEntity.setFullName(dto.getFullName());
+		}
+		
+		if (dto.getUsername() != null) {
+			userEntity.setUsername(dto.getUsername());
+		}
+		
+		if (dto.getRoleIds() != null && !dto.getRoleIds()
+		                                    .isEmpty()) {
+			List<Long> roleIds = dto.getRoleIds();
+			
+			Set<RoleEntity> existingRoles = userEntity.getRoles();
+			
+			if (existingRoles != null && !existingRoles.isEmpty()) {
+				for (Long roleId : roleIds) {
+					if (existingRoles.stream()
+					                 .anyMatch(role -> role.getId()
+					                                       .equals(roleId))) {
+						throw new IllegalArgumentException("User already has role with id: " + id);
+					}
+				}
+			}
+			
+			List<RoleDto> roles = roleService.findAllById(roleIds);
 			
 			userEntity.addRoles(roles.stream()
 			                         .map(roleMapper::toEntity)
