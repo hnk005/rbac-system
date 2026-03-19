@@ -2,6 +2,7 @@ package org.springboot.rbacsystem.mapper.user;
 
 
 import org.mapstruct.Mapper;
+import org.springboot.rbacsystem.dto.CreateUserDto;
 import org.springboot.rbacsystem.dto.UserDto;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
@@ -11,5 +12,7 @@ public interface UserMapper {
 	UserDto toDto(UserEntity userEntity);
 	
 	UserEntity toEntity(UserDto userDto);
+	
+	UserEntity fromCreate(CreateUserDto createUserDto);
 }
 

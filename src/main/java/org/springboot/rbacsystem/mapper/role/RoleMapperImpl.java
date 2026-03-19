@@ -2,17 +2,10 @@ package org.springboot.rbacsystem.mapper.role;
 
 import org.springboot.rbacsystem.dto.RoleDto;
 import org.springboot.rbacsystem.entity.RoleEntity;
-import org.springboot.rbacsystem.mapper.permission.PermissionMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.stream.Collectors;
 
 @Component
 public class RoleMapperImpl implements RoleMapper {
-	
-	@Autowired
-	private PermissionMapper permissionMapper;
 	
 	@Override
 	public RoleDto toDto(RoleEntity roleEntity) {
@@ -23,13 +16,6 @@ public class RoleMapperImpl implements RoleMapper {
 		RoleDto roleDto = new RoleDto();
 		roleDto.setId(roleEntity.getId());
 		roleDto.setName(roleEntity.getName());
-		
-		if (roleEntity.getPermissions() != null) {
-			roleDto.setPermissions(roleEntity.getPermissions()
-			                                 .stream()
-			                                 .map(permissionMapper::toDto)
-			                                 .collect(Collectors.toList()));
-		}
 		
 		return roleDto;
 	}
@@ -43,13 +29,6 @@ public class RoleMapperImpl implements RoleMapper {
 		RoleEntity roleEntity = new RoleEntity();
 		roleEntity.setId(roleDto.getId());
 		roleEntity.setName(roleDto.getName());
-		
-		if (roleDto.getPermissions() != null) {
-			roleEntity.setPermissions(roleDto.getPermissions()
-			                                 .stream()
-			                                 .map(permissionMapper::toEntity)
-			                                 .collect(Collectors.toSet()));
-		}
 		
 		return roleEntity;
 	}

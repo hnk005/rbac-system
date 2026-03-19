@@ -1,21 +1,29 @@
 package org.springboot.rbacsystem.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.SQLGrammarException;
-import org.springboot.rbacsystem.dto.UserDto;
+import org.springboot.rbacsystem.dto.CreateUserDto;
+import org.springboot.rbacsystem.dto.RoleDto;
 import org.springboot.rbacsystem.entity.UserEntity;
+import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapper;
 import org.springboot.rbacsystem.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
 	
+	private final RoleService roleService;
 	private final UserRepository repository;
 	private final BCryptPasswordEncoder encoder;
 	private final UserMapper mapper;
+	private final RoleMapper roleMapper;
 	
 	public String generateUniqueUsername(String email) {
 		String baseUsername = email.split("@")[0];
@@ -37,12 +45,11 @@ public class UserService {
 		return generatedUsername;
 	}
 	
-	public void create(UserDto dto) throws IllegalArgumentException, SQLGrammarException {
-		
-		//For register, we only need email and password, so we can skip validation for other fields
+	@Transactional
+	public String create(CreateUserDto dto) throws IllegalArgumentException, SQLGrammarException {
 		
 		if (dto == null) {
-			throw new IllegalArgumentException("UserDto cannot be null");
+			throw new IllegalArgumentException("Dto cannot be null");
 		}
 		
 		UserEntity existEmail = repository.findByEmail(dto.getEmail());
@@ -56,6 +63,23 @@ public class UserService {
 		String passwordHash = encoder.encode(dto.getPassword());
 		dto.setPassword(passwordHash);
 		
-		repository.save(mapper.toEntity(dto));
+		UserEntity userEntity = mapper.fromCreate(dto);
+		
+		if (dto.getRoleIds() != null && !dto.getRoleIds()
+		                                    .isEmpty()) {
+			List<Long> roleIds = dto.getRoleIds();
+			List<RoleDto> roles = roleService.findAllById(roleIds);
+			
+			if (roles.isEmpty() || roles.size() != roleIds.size()) {
+				throw new IllegalArgumentException("No valid roles found for the provided role IDs");
+			}
+			
+			userEntity.addRoles(roles.stream()
+			                         .map(roleMapper::toEntity)
+			                         .collect(Collectors.toSet()));
+		}
+		
+		repository.save(userEntity);
+		return "Success";
 	}
 }

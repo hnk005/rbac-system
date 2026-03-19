@@ -15,7 +15,6 @@ public class CreateUserDto {
 	
 	@JsonProperty
 	@Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters long")
-	@NotBlank(message = "Username must not be blank")
 	private String username;
 	
 	@JsonProperty(required = true)
@@ -34,6 +33,6 @@ public class CreateUserDto {
 	@Size(max = 100, message = "Email must be at most 100 characters long")
 	private String email;
 	
-	@JsonProperty(value = "user_roles")
-	private List<RoleDto> roles;
+	@JsonProperty(value = "user_role_ids")
+	private List<Long> roleIds;
 }

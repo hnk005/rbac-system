@@ -1,18 +1,12 @@
 package org.springboot.rbacsystem.mapper.user;
 
+import org.springboot.rbacsystem.dto.CreateUserDto;
 import org.springboot.rbacsystem.dto.UserDto;
 import org.springboot.rbacsystem.entity.UserEntity;
-import org.springboot.rbacsystem.mapper.role.RoleMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.stream.Collectors;
 
 @Component
 public class UserMapperImpl implements UserMapper {
-	
-	@Autowired
-	private RoleMapper roleMapper;
 	
 	@Override
 	public UserDto toDto(UserEntity userEntity) {
@@ -26,14 +20,6 @@ public class UserMapperImpl implements UserMapper {
 		userDto.setFullName(userEntity.getFullName());
 		userDto.setEmail(userEntity.getEmail());
 		userDto.setPassword(userEntity.getPassword());
-		
-		if (userEntity.getRoles() != null) {
-			userDto.setRoles(userEntity
-					.getRoles()
-					.stream()
-					.map(roleMapper::toDto)
-					.collect(Collectors.toList()));
-		}
 		
 		return userDto;
 	}
@@ -51,13 +37,24 @@ public class UserMapperImpl implements UserMapper {
 		userEntity.setEmail(userDto.getEmail());
 		userEntity.setPassword(userDto.getPassword());
 		
-		if (userDto.getRoles() != null) {
-			userEntity.setRoles(userDto.getRoles()
-			                           .stream()
-			                           .map(roleMapper::toEntity)
-			                           .collect(Collectors.toSet()));
+		return userEntity;
+	}
+	
+	@Override
+	public UserEntity fromCreate(CreateUserDto createUserDto) {
+		if (createUserDto == null) {
+			return null;
 		}
+		
+		UserEntity userEntity = new UserEntity();
+		
+		userEntity.setUsername(createUserDto.getUsername());
+		userEntity.setFullName(createUserDto.getFullName());
+		userEntity.setEmail(createUserDto.getEmail());
+		userEntity.setPassword(createUserDto.getPassword());
 		
 		return userEntity;
 	}
+	
+	
 }

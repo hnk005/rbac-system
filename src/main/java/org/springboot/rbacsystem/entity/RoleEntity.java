@@ -21,14 +21,14 @@ public class RoleEntity extends BaseEntity {
 	@Column(name = "description")
 	private String des;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
 	@JoinTable(
 			name = "role_permissions",
 			joinColumns = @JoinColumn(name = "role_id"),
 			inverseJoinColumns = @JoinColumn(name = "permission_id")
 	)
-	private Set<PermissionEntity> permissions = new HashSet<>();
+	private final Set<PermissionEntity> permissions = new HashSet<>();
 	
-	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-	private Set<UserEntity> users = new HashSet<>();
+	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+	private final Set<UserEntity> users = new HashSet<>();
 }

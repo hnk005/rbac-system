@@ -20,6 +20,6 @@ public class PermissionEntity extends BaseEntity {
 	@Column(name = "description")
 	private String des;
 	
-	@ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)
+	@ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
 	Set<RoleEntity> roles = new HashSet<>();
 }
