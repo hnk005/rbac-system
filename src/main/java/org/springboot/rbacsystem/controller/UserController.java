@@ -36,4 +36,9 @@ public class UserController {
 	public String update(@PathVariable Long id, @Valid @RequestBody UpdateUserDto dto) {
 		return service.update(id, dto);
 	}
+	
+	@DeleteMapping
+	public String delete(@RequestParam List<Long> ids) {
+		return service.delete(ids);
+	}
 }

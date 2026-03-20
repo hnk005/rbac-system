@@ -169,4 +169,15 @@ public class UserService {
 		repository.save(userEntity);
 		return "Success";
 	}
+	
+	public String delete(List<Long> ids) throws IllegalArgumentException {
+		List<UserEntity> userEntities = repository.findAllById(ids);
+		
+		if (userEntities.isEmpty()) {
+			throw new IllegalArgumentException("No users found for the provided IDs");
+		}
+		
+		repository.deleteAll(userEntities);
+		return "Success";
+	}
 }
