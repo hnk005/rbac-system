@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -36,4 +37,40 @@ public class RoleEntity extends BaseEntity {
 	@EqualsAndHashCode.Exclude
 	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
 	private final Set<UserEntity> users = new HashSet<>();
+	
+	public void addPermission(PermissionEntity permission) {
+		this.permissions.add(permission);
+		permission.getRoles()
+		          .add(this);
+	}
+	
+	public void addPermissions(Set<PermissionEntity> newPermissions) {
+		for (PermissionEntity permission : newPermissions) {
+			this.addPermission(permission);
+		}
+	}
+	
+	public void removePermission(PermissionEntity permission) {
+		this.permissions.remove(permission);
+		permission.getRoles()
+		          .remove(this);
+	}
+	
+	public void removePermissions(List<PermissionEntity> permissions) {
+		for (PermissionEntity permission : permissions) {
+			this.removePermission(permission);
+		}
+	}
+	
+	public void removeUser(UserEntity user) {
+		this.users.remove(user);
+		user.getRoles()
+		    .remove(this);
+	}
+	
+	public void removeUsers(Set<UserEntity> usersToRemove) {
+		for (UserEntity user : usersToRemove) {
+			this.removeUser(user);
+		}
+	}
 }

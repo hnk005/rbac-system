@@ -20,8 +20,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
 	
 	private final RoleService roleService;
@@ -80,10 +80,6 @@ public class UserService {
 	}
 	
 	public String create(CreateUserDto dto) throws IllegalArgumentException, SQLGrammarException {
-		
-		if (dto == null) {
-			throw new IllegalArgumentException("Dto cannot be null");
-		}
 		
 		UserEntity userEntity = repository.findByEmail(dto.getEmail());
 		if (userEntity != null) {

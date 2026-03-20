@@ -1,6 +1,5 @@
 package org.springboot.rbacsystem.mapper.user;
 
-import org.springboot.rbacsystem.dto.CreateUserDto;
 import org.springboot.rbacsystem.dto.UserDto;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springframework.stereotype.Component;
@@ -39,21 +38,4 @@ public class UserMapperImpl implements UserMapper {
 		
 		return userEntity;
 	}
-	
-	@Override
-	public UserEntity fromCreate(CreateUserDto createUserDto) {
-		if (createUserDto == null) {
-			return null;
-		}
-		
-		UserEntity userEntity = new UserEntity();
-		
-		userEntity.setFullName(createUserDto.getFullName());
-		userEntity.setEmail(createUserDto.getEmail());
-		userEntity.setPassword(createUserDto.getPassword());
-		
-		return userEntity;
-	}
-	
-	
 }
