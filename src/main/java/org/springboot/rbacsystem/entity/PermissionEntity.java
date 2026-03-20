@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -24,5 +25,17 @@ public class PermissionEntity extends BaseEntity {
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	@ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
-	Set<RoleEntity> roles = new HashSet<>();
+	private final Set<RoleEntity> roles = new HashSet<>();
+	
+	public void removeRole(RoleEntity role) {
+		role.getPermissions()
+		    .remove(this);
+		this.roles.remove(role);
+	}
+	
+	public void removeRoles(List<RoleEntity> roles) {
+		for (RoleEntity role : roles) {
+			this.removeRole(role);
+		}
+	}
 }
