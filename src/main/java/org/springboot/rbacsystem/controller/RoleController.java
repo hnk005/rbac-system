@@ -1,5 +1,6 @@
 package org.springboot.rbacsystem.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springboot.rbacsystem.dto.CreateRoleDto;
 import org.springboot.rbacsystem.dto.RoleDto;
@@ -27,12 +28,12 @@ public class RoleController {
 	}
 	
 	@PostMapping
-	public String create(@RequestBody CreateRoleDto dto) {
+	public String create(@Valid @RequestBody CreateRoleDto dto) {
 		return service.create(dto);
 	}
 	
 	@PutMapping("/{id}")
-	public String update(@PathVariable Long id, @RequestBody UpdateRoleDto dto) {
+	public String update(@PathVariable Long id, @Valid @RequestBody UpdateRoleDto dto) {
 		return service.update(id, dto);
 	}
 	

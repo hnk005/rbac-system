@@ -78,12 +78,12 @@ public class UserService {
 	
 	public String create(CreateUserDto dto) throws IllegalArgumentException, SQLGrammarException {
 		
-		UserEntity userEntity = repository.findByEmail(dto.getEmail());
-		if (userEntity != null) {
+		UserEntity existUserEntity = repository.findByEmail(dto.getEmail());
+		if (existUserEntity != null) {
 			throw new IllegalArgumentException("Email already exists");
 		}
 		
-		userEntity = new UserEntity();
+		UserEntity userEntity = new UserEntity();
 		userEntity.setEmail(dto.getEmail());
 		userEntity.setFullName(dto.getFullName());
 		
@@ -168,11 +168,11 @@ public class UserService {
 			throw new IllegalArgumentException("No users found for the provided IDs");
 		}
 		
-		userEntities = userEntities.stream()
-		                           .peek(userEntity -> userEntity.removeRoles(userEntity.getRoles()
-		                                                                                .stream()
-		                                                                                .toList()))
-		                           .toList();
+		userEntities.forEach(userEntity ->
+				userEntity.removeRoles(
+						userEntity.getRoles()
+						          .stream()
+						          .toList()));
 		
 		repository.deleteAll(userEntities);
 		return "Success";

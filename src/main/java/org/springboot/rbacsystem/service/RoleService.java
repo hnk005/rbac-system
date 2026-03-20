@@ -65,13 +65,13 @@ public class RoleService {
 	}
 	
 	public String create(CreateRoleDto dto) {
-		RoleEntity roleEntity = repository.findByName(dto.getName());
+		final RoleEntity existRoleEntity = repository.findByName(dto.getName());
 		
-		if (roleEntity != null) {
+		if (existRoleEntity != null) {
 			throw new IllegalArgumentException("Role with name '" + dto.getName() + "' already exists");
 		}
 		
-		roleEntity = new RoleEntity();
+		final RoleEntity roleEntity = new RoleEntity();
 		roleEntity.setName(dto.getName());
 		roleEntity.setDes(dto.getDes());
 		
@@ -136,13 +136,11 @@ public class RoleService {
 			throw new IllegalArgumentException("No valid roles found for the provided IDs");
 		}
 		
-		roleEntities = roleEntities.stream()
-		                           .peek(roleEntity -> {
-			                           roleEntity.removeUsers(roleEntity.getUsers()
-			                                                            .stream()
-			                                                            .toList());
-		                           })
-		                           .toList();
+		roleEntities.forEach(roleEntity -> {
+			roleEntity.removeUsers(roleEntity.getUsers()
+			                                 .stream()
+			                                 .toList());
+		});
 		
 		repository.deleteAll(roleEntities);
 		return "Success";
