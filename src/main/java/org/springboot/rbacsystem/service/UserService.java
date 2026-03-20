@@ -6,7 +6,6 @@ import org.springboot.rbacsystem.dto.CreateUserDto;
 import org.springboot.rbacsystem.dto.RoleDto;
 import org.springboot.rbacsystem.dto.UpdateUserDto;
 import org.springboot.rbacsystem.dto.UserDto;
-import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapper;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -108,7 +105,7 @@ public class UserService {
 			
 			userEntity.addRoles(roles.stream()
 			                         .map(roleMapper::toEntity)
-			                         .collect(Collectors.toSet()));
+			                         .toList());
 		}
 		
 		repository.save(userEntity);
@@ -145,23 +142,19 @@ public class UserService {
 		                                    .isEmpty()) {
 			List<Long> roleIds = dto.getRoleIds();
 			
-			Set<RoleEntity> existingRoles = userEntity.getRoles();
+			List<RoleDto> roles = roleService.findAllById(roleIds);
 			
-			if (existingRoles != null && !existingRoles.isEmpty()) {
-				for (Long roleId : roleIds) {
-					if (existingRoles.stream()
-					                 .anyMatch(role -> role.getId()
-					                                       .equals(roleId))) {
-						throw new IllegalArgumentException("User already has role with id: " + id);
-					}
-				}
+			if (roles.size() < roleIds.size()) {
+				throw new IllegalArgumentException("No valid roles found for the provided role IDs");
 			}
 			
-			List<RoleDto> roles = roleService.findAllById(roleIds);
+			userEntity.removeRoles(userEntity.getRoles()
+			                                 .stream()
+			                                 .toList());
 			
 			userEntity.addRoles(roles.stream()
 			                         .map(roleMapper::toEntity)
-			                         .collect(Collectors.toSet()));
+			                         .toList());
 		}
 		
 		repository.save(userEntity);
@@ -174,6 +167,12 @@ public class UserService {
 		if (userEntities.isEmpty()) {
 			throw new IllegalArgumentException("No users found for the provided IDs");
 		}
+		
+		userEntities = userEntities.stream()
+		                           .peek(userEntity -> userEntity.removeRoles(userEntity.getRoles()
+		                                                                                .stream()
+		                                                                                .toList()))
+		                           .toList();
 		
 		repository.deleteAll(userEntities);
 		return "Success";

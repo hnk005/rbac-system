@@ -68,8 +68,8 @@ public class RoleEntity extends BaseEntity {
 		    .remove(this);
 	}
 	
-	public void removeUsers(Set<UserEntity> usersToRemove) {
-		for (UserEntity user : usersToRemove) {
+	public void removeUsers(List<UserEntity> users) {
+		for (UserEntity user : users) {
 			this.removeUser(user);
 		}
 	}

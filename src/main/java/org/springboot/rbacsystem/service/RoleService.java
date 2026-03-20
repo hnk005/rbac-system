@@ -136,13 +136,15 @@ public class RoleService {
 			throw new IllegalArgumentException("No valid roles found for the provided IDs");
 		}
 		
-		List<RoleEntity> roleEntities1 = roleEntities.stream()
-		                                             .peek(roleEntity -> {
-			                                             roleEntity.removeUsers(roleEntity.getUsers());
-		                                             })
-		                                             .toList();
+		roleEntities = roleEntities.stream()
+		                           .peek(roleEntity -> {
+			                           roleEntity.removeUsers(roleEntity.getUsers()
+			                                                            .stream()
+			                                                            .toList());
+		                           })
+		                           .toList();
 		
-		repository.deleteAll(roleEntities1);
+		repository.deleteAll(roleEntities);
 		return "Success";
 	}
 }

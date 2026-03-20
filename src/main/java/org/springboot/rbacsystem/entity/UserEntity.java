@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -45,9 +46,21 @@ public class UserEntity extends BaseEntity {
 		    .add(this);
 	}
 	
-	public void addRoles(Set<RoleEntity> newRoles) {
+	public void addRoles(List<RoleEntity> newRoles) {
 		for (RoleEntity role : newRoles) {
 			this.addRole(role);
+		}
+	}
+	
+	public void removeRole(RoleEntity role) {
+		this.roles.remove(role);
+		role.getUsers()
+		    .remove(this);
+	}
+	
+	public void removeRoles(List<RoleEntity> roles) {
+		for (RoleEntity role : roles) {
+			this.removeRole(role);
 		}
 	}
 }
