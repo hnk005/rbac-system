@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/permissions")
+@RequestMapping(value = "/{version}/permissions", version = "1.0")
 @RequiredArgsConstructor
 public class PermissionController {
 	
