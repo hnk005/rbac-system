@@ -5,6 +5,7 @@ import org.hibernate.exception.SQLGrammarException;
 import org.springboot.rbacsystem.dto.CreateUserDto;
 import org.springboot.rbacsystem.dto.RoleDto;
 import org.springboot.rbacsystem.dto.UpdateUserDto;
+import org.springboot.rbacsystem.dto.UserDto;
 import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 	
 	private final RoleService roleService;
@@ -48,7 +50,35 @@ public class UserService {
 		return generatedUsername;
 	}
 	
-	@Transactional
+	public List<UserDto> findAll() {
+		List<UserEntity> userEntities = repository.findAll();
+		
+		
+		return userEntities.stream()
+		                   .map(userEntity -> {
+			                   List<RoleDto> roles = userEntity.getRoles()
+			                                                   .stream()
+			                                                   .map(roleMapper::toDto)
+			                                                   .toList();
+			                   UserDto userDto = mapper.toDto(userEntity);
+			                   userDto.setRoles(roles);
+			                   return userDto;
+		                   })
+		                   .toList();
+	}
+	
+	public UserDto findById(Long id) throws IllegalArgumentException {
+		UserEntity userEntity = repository.findById(id)
+		                                  .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+		List<RoleDto> roles = userEntity.getRoles()
+		                                .stream()
+		                                .map(roleMapper::toDto)
+		                                .toList();
+		UserDto userDto = mapper.toDto(userEntity);
+		userDto.setRoles(roles);
+		return userDto;
+	}
+	
 	public String create(CreateUserDto dto) throws IllegalArgumentException, SQLGrammarException {
 		
 		if (dto == null) {
@@ -87,7 +117,6 @@ public class UserService {
 		return "Success";
 	}
 	
-	@Transactional
 	public String update(Long id, UpdateUserDto dto) throws IllegalArgumentException {
 		UserEntity userEntity = repository.findById(id)
 		                                  .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
