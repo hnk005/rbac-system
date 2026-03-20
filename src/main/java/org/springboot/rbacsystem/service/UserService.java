@@ -90,12 +90,14 @@ public class UserService {
 			throw new IllegalArgumentException("Email already exists");
 		}
 		
-		userEntity = mapper.fromCreate(dto);
+		userEntity = new UserEntity();
+		userEntity.setEmail(dto.getEmail());
+		userEntity.setFullName(dto.getFullName());
 		
 		String uniqueUsername = generateUniqueUsername(userEntity.getEmail());
 		userEntity.setUsername(uniqueUsername);
 		
-		String passwordHash = encoder.encode(userEntity.getPassword());
+		String passwordHash = encoder.encode(dto.getPassword());
 		userEntity.setPassword(passwordHash);
 		
 		
