@@ -44,7 +44,7 @@ public class RoleEntity extends BaseEntity {
 		          .add(this);
 	}
 	
-	public void addPermissions(Set<PermissionEntity> newPermissions) {
+	public void addPermissions(List<PermissionEntity> newPermissions) {
 		for (PermissionEntity permission : newPermissions) {
 			this.addPermission(permission);
 		}

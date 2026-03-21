@@ -7,8 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateUserDto {
@@ -28,7 +26,4 @@ public class CreateUserDto {
 	@Email(message = "Email should be valid")
 	@Size(max = 100, message = "Email must be at most 100 characters long")
 	private String email;
-	
-	@JsonProperty(value = "user_role_ids")
-	private List<Long> roleIds;
 }

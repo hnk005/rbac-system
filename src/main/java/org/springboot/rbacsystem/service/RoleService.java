@@ -64,6 +64,24 @@ public class RoleService {
 		return roleDto;
 	}
 	
+	public RoleDto findByName(String name) {
+		RoleEntity roleEntity = repository.findByName(name);
+		
+		if (roleEntity == null) {
+			throw new RuntimeException("Role not found with name: " + name);
+		}
+		
+		List<PermissionDto> permissionDtos = roleEntity.getPermissions()
+		                                               .stream()
+		                                               .map(permissionMapper::toDto)
+		                                               .toList();
+		
+		RoleDto roleDto = mapper.toDto(roleEntity);
+		roleDto.setPermissions(permissionDtos);
+		
+		return roleDto;
+	}
+	
 	public String create(CreateRoleDto dto) {
 		boolean existRoleEntity = repository.existsByName(dto.getName());
 		
@@ -86,7 +104,7 @@ public class RoleService {
 			
 			roleEntity.addPermissions(permissions.stream()
 			                                     .map(permissionMapper::toEntity)
-			                                     .collect(Collectors.toSet()));
+			                                     .collect(Collectors.toList()));
 		}
 		
 		repository.save(roleEntity);
@@ -122,7 +140,7 @@ public class RoleService {
 			                                       .toList());
 			roleEntity.addPermissions(permissions.stream()
 			                                     .map(permissionMapper::toEntity)
-			                                     .collect(Collectors.toSet()));
+			                                     .collect(Collectors.toList()));
 		}
 		
 		repository.save(roleEntity);

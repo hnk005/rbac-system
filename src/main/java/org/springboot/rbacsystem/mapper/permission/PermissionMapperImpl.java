@@ -16,6 +16,7 @@ public class PermissionMapperImpl implements PermissionMapper {
 		PermissionDto permissionDto = new PermissionDto();
 		permissionDto.setId(permissionEntity.getId());
 		permissionDto.setName(permissionEntity.getName());
+		permissionDto.setDes(permissionEntity.getDes());
 		
 		return permissionDto;
 	}
@@ -29,6 +30,7 @@ public class PermissionMapperImpl implements PermissionMapper {
 		PermissionEntity permissionEntity = new PermissionEntity();
 		permissionEntity.setId(permissionDto.getId());
 		permissionEntity.setName(permissionDto.getName());
+		permissionEntity.setDes(permissionDto.getDes());
 		
 		return permissionEntity;
 	}
