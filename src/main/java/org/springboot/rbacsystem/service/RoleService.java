@@ -65,13 +65,13 @@ public class RoleService {
 	}
 	
 	public String create(CreateRoleDto dto) {
-		final RoleEntity existRoleEntity = repository.findByName(dto.getName());
+		boolean existRoleEntity = repository.existsByName(dto.getName());
 		
-		if (existRoleEntity != null) {
+		if (existRoleEntity) {
 			throw new IllegalArgumentException("Role with name '" + dto.getName() + "' already exists");
 		}
 		
-		final RoleEntity roleEntity = new RoleEntity();
+		RoleEntity roleEntity = new RoleEntity();
 		roleEntity.setName(dto.getName());
 		roleEntity.setDes(dto.getDes());
 		

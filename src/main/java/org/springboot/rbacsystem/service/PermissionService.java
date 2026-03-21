@@ -47,9 +47,9 @@ public class PermissionService {
 	}
 	
 	public String create(CreatePermissionDto dto) {
-		PermissionEntity existingPermission = repository.findByName(dto.getName());
+		boolean existingPermission = repository.existsByName(dto.getName());
 		
-		if (existingPermission != null) {
+		if (existingPermission) {
 			throw new IllegalArgumentException("Permission with name '" + dto.getName() + "' already exists");
 		}
 		

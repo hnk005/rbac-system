@@ -36,10 +36,11 @@ public class UserService {
 		do {
 			// Append a random number (e.g., 5 digits)
 			generatedUsername = baseUsername + (int) (Math.random() * 90000) + 10000;
-			// Check if it exists in the database
-			if (repository.findByUsername(generatedUsername) == null) {
+			
+			if (!repository.existsByUsername(generatedUsername)) {
 				isUnique = true;
 			}
+			
 			// Add a safety break condition for infinite loops
 			if (attempts++ > 10) throw new RuntimeException("Could not generate unique username");
 		} while (!isUnique);
@@ -78,8 +79,8 @@ public class UserService {
 	
 	public String create(CreateUserDto dto) throws IllegalArgumentException, SQLGrammarException {
 		
-		UserEntity existUserEntity = repository.findByEmail(dto.getEmail());
-		if (existUserEntity != null) {
+		boolean existUserEntity = repository.existsByEmail(dto.getEmail());
+		if (existUserEntity) {
 			throw new IllegalArgumentException("Email already exists");
 		}
 		
@@ -118,8 +119,8 @@ public class UserService {
 		
 		if (dto.getEmail() != null && !dto.getEmail()
 		                                  .equals(userEntity.getEmail())) {
-			UserEntity existEmail = repository.findByEmail(dto.getEmail());
-			if (existEmail != null) {
+			boolean existEmail = repository.existsByEmail(dto.getEmail());
+			if (existEmail) {
 				throw new IllegalArgumentException("Email already exists");
 			}
 			userEntity.setEmail(dto.getEmail());
