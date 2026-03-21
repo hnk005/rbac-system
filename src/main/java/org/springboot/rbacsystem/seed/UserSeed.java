@@ -11,7 +11,6 @@ import org.springboot.rbacsystem.service.UserService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +22,6 @@ public class UserSeed {
 	private final UserService service;
 	private final UserRepository repository;
 	private final RoleRepository roleRepository;
-	private final BCryptPasswordEncoder encoder;
 	
 	@EventListener(ApplicationReadyEvent.class)
 	@Order(3)
@@ -42,7 +40,7 @@ public class UserSeed {
 			
 			UserEntity adminUser = new UserEntity();
 			adminUser.setEmail("admin@gmail.com");
-			adminUser.setPassword(encoder.encode("admin123"));
+			adminUser.setPassword(service.generatePassword("admin123"));
 			adminUser.setFullName("Admin");
 			adminUser.setUsername(service.generateUniqueUsername(adminUser.getEmail()));
 			adminUser.addRole(adminRole);

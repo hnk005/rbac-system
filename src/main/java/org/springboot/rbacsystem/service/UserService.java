@@ -11,7 +11,7 @@ import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapper;
 import org.springboot.rbacsystem.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +24,7 @@ public class UserService {
 	
 	private final RoleService roleService;
 	private final UserRepository repository;
-	private final BCryptPasswordEncoder encoder;
+	private final PasswordEncoder encoder;
 	private final UserMapper mapper;
 	private final RoleMapper roleMapper;
 	
@@ -47,6 +47,10 @@ public class UserService {
 		} while (!isUnique);
 		
 		return generatedUsername;
+	}
+	
+	public String generatePassword(String password) {
+		return encoder.encode(password);
 	}
 	
 	public List<UserDto> findAll() {
