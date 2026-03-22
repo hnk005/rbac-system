@@ -4,12 +4,20 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateUserDto {
+	
+	@JsonProperty
+	@Pattern(regexp = ".*\\S.*", message = "Username must not be blank")
+	@Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters long")
+	private String username;
 	
 	@JsonProperty(required = true)
 	@NotBlank(message = "Password must not be blank")
@@ -26,4 +34,7 @@ public class CreateUserDto {
 	@Email(message = "Email should be valid")
 	@Size(max = 100, message = "Email must be at most 100 characters long")
 	private String email;
+	
+	@JsonProperty(value = "user_role_ids")
+	private List<Long> roleIds;
 }

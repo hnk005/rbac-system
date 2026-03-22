@@ -5,6 +5,7 @@ import org.springboot.rbacsystem.dto.CreateRoleDto;
 import org.springboot.rbacsystem.dto.PermissionDto;
 import org.springboot.rbacsystem.dto.RoleDto;
 import org.springboot.rbacsystem.dto.UpdateRoleDto;
+import org.springboot.rbacsystem.entity.PermissionEntity;
 import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.mapper.permission.PermissionMapper;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,13 +24,8 @@ public class RoleService {
 	private final PermissionService permissionService;
 	private final PermissionMapper permissionMapper;
 	
-	public List<RoleDto> findAllById(List<Long> ids) {
-		
-		List<RoleEntity> roleEntities = repository.findAllById(ids);
-		
-		return roleEntities.stream()
-		                   .map(mapper::toDto)
-		                   .collect(Collectors.toList());
+	public List<RoleEntity> findAllById(List<Long> ids) {
+		return repository.findAllById(ids);
 	}
 	
 	public List<RoleDto> findAll() {
@@ -64,6 +59,7 @@ public class RoleService {
 		return roleDto;
 	}
 	
+	
 	public RoleDto findByName(String name) {
 		RoleEntity roleEntity = repository.findByName(name);
 		
@@ -93,25 +89,16 @@ public class RoleService {
 		roleEntity.setName(dto.getName());
 		roleEntity.setDes(dto.getDes());
 		
-		if (dto.getPermissionIds() != null) {
+		if (dto.getPermissionIds() != null && !dto.getPermissionIds()
+		                                          .isEmpty()) {
+			List<Long> permissionIds = dto.getPermissionIds();
+			List<PermissionEntity> permissions = permissionService.findAllById(permissionIds);
 			
-			if (dto.getPermissionIds()
-			       .isEmpty()) {
-				
-				roleEntity.removePermissionAll();
-			} else {
-				
-				List<Long> permissionIds = dto.getPermissionIds();
-				List<PermissionDto> permissions = permissionService.findAllById(permissionIds);
-				
-				if (permissions.isEmpty() || permissions.size() != permissionIds.size()) {
-					throw new IllegalArgumentException("No valid permissions found for the provided role IDs");
-				}
-				
-				roleEntity.addPermissions(permissions.stream()
-				                                     .map(permissionMapper::toEntity)
-				                                     .collect(Collectors.toList()));
+			if (permissions.isEmpty() || permissions.size() != permissionIds.size()) {
+				throw new IllegalArgumentException("No valid permissions found for the provided role");
 			}
+			
+			roleEntity.addPermissions(permissions);
 		}
 		
 		repository.save(roleEntity);
@@ -134,20 +121,21 @@ public class RoleService {
 		}
 		
 		if (dto.getPermissionIds() != null) {
-			List<Long> permissionIds = dto.getPermissionIds();
 			
-			List<PermissionDto> permissions = permissionService.findAllById(permissionIds);
+			roleEntity.clearPermissionAll();
 			
-			if (permissions.size() < permissionIds.size()) {
-				throw new IllegalArgumentException("No valid permissions found for the provided role IDs");
+			if (!dto.getPermissionIds()
+			        .isEmpty()) {
+				
+				List<Long> permissionIds = dto.getPermissionIds();
+				List<PermissionEntity> permissions = permissionService.findAllById(permissionIds);
+				
+				if (permissions.size() != permissionIds.size()) {
+					throw new IllegalArgumentException("No valid permissions found for the provided role IDs");
+				}
+				
+				roleEntity.addPermissions(permissions);
 			}
-			
-			roleEntity.removePermissions(roleEntity.getPermissions()
-			                                       .stream()
-			                                       .toList());
-			roleEntity.addPermissions(permissions.stream()
-			                                     .map(permissionMapper::toEntity)
-			                                     .collect(Collectors.toList()));
 		}
 		
 		repository.save(roleEntity);
@@ -161,11 +149,7 @@ public class RoleService {
 			throw new IllegalArgumentException("No valid roles found for the provided IDs");
 		}
 		
-		roleEntities.forEach(roleEntity -> {
-			roleEntity.removeUsers(roleEntity.getUsers()
-			                                 .stream()
-			                                 .toList());
-		});
+		roleEntities.forEach(RoleEntity::clearPermissionAll);
 		
 		repository.deleteAll(roleEntities);
 		return "Success";

@@ -26,4 +26,10 @@ public class PermissionController {
 	public List<PermissionDto> getAll() {
 		return service.findAll();
 	}
+	
+	@GetMapping("/me")
+	@RequirePermission(owner = ResourceOwner.USER, action = Action.READ)
+	public List<String> getCurrentUserPermissions() {
+		return service.getCurrentUserPermissions();
+	}
 }

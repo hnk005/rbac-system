@@ -40,16 +40,16 @@ public class UserSeed {
 			
 			UserEntity adminUser = new UserEntity();
 			adminUser.setEmail("admin@example.com");
+			adminUser.setUsername("admin");
 			adminUser.setPassword(service.generatePassword("admin123"));
 			adminUser.setFullName("Admin");
-			adminUser.setUsername(service.generateUniqueUsername(adminUser.getEmail()));
 			adminUser.addRole(adminRole);
 			
 			UserEntity testUser = new UserEntity();
 			testUser.setEmail("test@example.com");
+			testUser.setUsername("test");
 			testUser.setPassword(service.generatePassword("test123"));
 			testUser.setFullName("Test");
-			testUser.setUsername(service.generateUniqueUsername(testUser.getEmail()));
 			testUser.addRole(testRole);
 			
 			repository.save(adminUser);

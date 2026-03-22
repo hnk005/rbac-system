@@ -34,6 +34,12 @@ public class UserController {
 		return service.findById(id);
 	}
 	
+	@GetMapping("/me")
+	@RequirePermission(owner = ResourceOwner.USER, action = Action.READ)
+	public UserDto getCurrentUser() {
+		return service.findByCurrentUser();
+	}
+	
 	@PostMapping
 	@RequirePermission(owner = ResourceOwner.SYS, action = Action.CREATE)
 	public String create(@Valid @RequestBody CreateUserDto dto) {

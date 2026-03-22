@@ -52,23 +52,7 @@ public class UserEntity extends BaseEntity {
 		}
 	}
 	
-	public void removeRole(RoleEntity role) {
-		this.roles.remove(role);
-		role.getUsers()
-		    .remove(this);
-	}
-	
-	public void removeRoles(List<RoleEntity> roles) {
-		for (RoleEntity role : roles) {
-			this.removeRole(role);
-		}
-	}
-	
-	public void removeRoleAll() {
-		for (RoleEntity role : this.roles) {
-			role.getUsers()
-			    .remove(this);
-		}
+	public void clearRoles() {
 		this.roles.clear();
 	}
 }

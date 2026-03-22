@@ -2,17 +2,19 @@ package org.springboot.rbacsystem.service;
 
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.SQLGrammarException;
-import org.springboot.rbacsystem.constrant.RoleEnum;
 import org.springboot.rbacsystem.dto.*;
+import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapper;
 import org.springboot.rbacsystem.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -99,6 +101,37 @@ public class UserService {
 		return userDto;
 	}
 	
+	public UserDto findByCurrentUser() {
+		String username = Objects.requireNonNull(SecurityContextHolder.getContext()
+		                                                              .getAuthentication())
+		                         .getName();
+		
+		UserEntity userEntity = repository.findByUsername(username);
+		
+		if (userEntity == null) {
+			throw new IllegalArgumentException("Current user not found");
+		}
+		
+		List<RoleDto> roles = userEntity.getRoles()
+		                                .stream()
+		                                .map(roleMapper::toDto)
+		                                .toList();
+		
+		UserDto userDto = mapper.toDto(userEntity);
+		
+		List<UserRolesDto> userRolesDtos = roles.stream()
+		                                        .map(role -> {
+			                                        UserRolesDto userRolesDto = new UserRolesDto();
+			                                        userRolesDto.setId(role.getId());
+			                                        userRolesDto.setName(role.getName());
+			                                        return userRolesDto;
+		                                        })
+		                                        .toList();
+		
+		userDto.setRoles(userRolesDtos);
+		return userDto;
+	}
+	
 	public String create(CreateUserDto dto) throws IllegalArgumentException, SQLGrammarException {
 		
 		boolean existUserEntity = repository.existsByEmail(dto.getEmail());
@@ -110,13 +143,32 @@ public class UserService {
 		userEntity.setEmail(dto.getEmail());
 		userEntity.setFullName(dto.getFullName());
 		
-		String uniqueUsername = generateUniqueUsername(userEntity.getEmail());
-		userEntity.setUsername(uniqueUsername);
+		if (dto.getUsername() != null) {
+			boolean existUsername = repository.existsByUsername(dto.getUsername());
+			if (existUsername) {
+				throw new IllegalArgumentException("Username already exists");
+			}
+		} else {
+			String uniqueUsername = generateUniqueUsername(userEntity.getEmail());
+			dto.setUsername(uniqueUsername);
+		}
+		
+		userEntity.setUsername(dto.getUsername());
 		
 		String passwordHash = encoder.encode(dto.getPassword());
 		userEntity.setPassword(passwordHash);
 		
-		userEntity.addRole(roleMapper.toEntity(roleService.findByName(RoleEnum.USER.getValue())));
+		if (dto.getRoleIds() != null && !dto.getRoleIds()
+		                                    .isEmpty()) {
+			List<Long> roleIds = dto.getRoleIds();
+			List<RoleEntity> roles = roleService.findAllById(roleIds);
+			
+			if (roles.isEmpty() || roles.size() != roleIds.size()) {
+				throw new IllegalArgumentException("No valid roles found for the provided user");
+			}
+			
+			userEntity.addRoles(roles);
+		}
 		
 		repository.save(userEntity);
 		return "Success";
@@ -150,28 +202,21 @@ public class UserService {
 		
 		if (dto.getRoleIds() != null) {
 			
-			if (dto.getRoleIds()
-			       .isEmpty()) {
-				userEntity.removeRoleAll();
-			} else {
+			userEntity.clearRoles();
+			
+			if (!dto.getRoleIds()
+			        .isEmpty()) {
+				
 				List<Long> roleIds = dto.getRoleIds();
 				
-				List<RoleDto> roles = roleService.findAllById(roleIds);
+				List<RoleEntity> roles = roleService.findAllById(roleIds);
 				
-				if (roles.size() < roleIds.size()) {
+				if (roles.size() != roleIds.size()) {
 					throw new IllegalArgumentException("No valid roles found for the provided role IDs");
 				}
 				
-				userEntity.removeRoles(userEntity.getRoles()
-				                                 .stream()
-				                                 .toList());
-				
-				userEntity.addRoles(roles.stream()
-				                         .map(roleMapper::toEntity)
-				                         .toList());
+				userEntity.addRoles(roles);
 			}
-			
-			
 		}
 		
 		repository.save(userEntity);
@@ -185,11 +230,7 @@ public class UserService {
 			throw new IllegalArgumentException("No users found for the provided IDs");
 		}
 		
-		userEntities.forEach(userEntity ->
-				userEntity.removeRoles(
-						userEntity.getRoles()
-						          .stream()
-						          .toList()));
+		userEntities.forEach(UserEntity::clearRoles);
 		
 		repository.deleteAll(userEntities);
 		return "Success";

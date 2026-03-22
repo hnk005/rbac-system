@@ -5,6 +5,9 @@ import org.springboot.rbacsystem.dto.PermissionDto;
 import org.springboot.rbacsystem.entity.PermissionEntity;
 import org.springboot.rbacsystem.mapper.permission.PermissionMapper;
 import org.springboot.rbacsystem.repository.PermissionRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,21 +30,23 @@ public class PermissionService {
 		                         .collect(Collectors.toList());
 	}
 	
-	public PermissionDto findById(Long id) {
-		PermissionEntity permissionEntity = repository.findById(id)
-		                                              .orElseThrow(() -> new RuntimeException("Permission not found " +
-				                                              "with id: " + id));
-		
-		return mapper.toDto(permissionEntity);
+	public List<PermissionEntity> findAllById(List<Long> ids) {
+		return repository.findAllById(ids);
 	}
 	
-	public List<PermissionDto> findAllById(List<Long> ids) {
-		List<PermissionEntity> roleEntities = repository.findAllById(ids);
+	public List<String> getCurrentUserPermissions() {
+		Authentication authentication = SecurityContextHolder.getContext()
+		                                                     .getAuthentication();
 		
-		return roleEntities.stream()
-		                   .map(mapper::toDto)
-		                   .collect(Collectors.toList());
+		if (authentication == null) {
+			return null;
+		}
 		
+		return authentication.getAuthorities()
+		                     .stream()
+		                     .map(GrantedAuthority::getAuthority)
+		                     .toList();
 	}
+	
 }
 
