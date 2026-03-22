@@ -31,21 +31,29 @@ public class UserSeed {
 		
 		if (repository.count() == 0) {
 			RoleEntity adminRole = roleRepository.findByName(RoleEnum.ADMIN.getValue());
+			RoleEntity testRole = roleRepository.findByName(RoleEnum.USER.getValue());
 			
 			if (adminRole == null) {
 				log.error("Không tìm thấy role Admin không thể khởi tạo");
 				return;
 			}
 			
-			
 			UserEntity adminUser = new UserEntity();
-			adminUser.setEmail("admin@gmail.com");
+			adminUser.setEmail("admin@example.com");
 			adminUser.setPassword(service.generatePassword("admin123"));
 			adminUser.setFullName("Admin");
 			adminUser.setUsername(service.generateUniqueUsername(adminUser.getEmail()));
 			adminUser.addRole(adminRole);
 			
+			UserEntity testUser = new UserEntity();
+			testUser.setEmail("test@example.com");
+			testUser.setPassword(service.generatePassword("test123"));
+			testUser.setFullName("Test");
+			testUser.setUsername(service.generateUniqueUsername(testUser.getEmail()));
+			testUser.addRole(testRole);
+			
 			repository.save(adminUser);
+			repository.save(testUser);
 		}
 	}
 }
