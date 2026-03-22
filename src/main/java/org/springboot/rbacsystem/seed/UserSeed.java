@@ -7,10 +7,10 @@ import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.repository.RoleRepository;
 import org.springboot.rbacsystem.repository.UserRepository;
-import org.springboot.rbacsystem.service.UserService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserSeed {
 	
-	private final UserService service;
+	private final PasswordEncoder encoder;
 	private final UserRepository repository;
 	private final RoleRepository roleRepository;
 	
@@ -41,14 +41,14 @@ public class UserSeed {
 			UserEntity adminUser = new UserEntity();
 			adminUser.setEmail("admin@example.com");
 			adminUser.setUsername("admin");
-			adminUser.setPassword(service.generatePassword("admin123"));
+			adminUser.setPassword(encoder.encode("admin123"));
 			adminUser.setFullName("Admin");
 			adminUser.addRole(adminRole);
 			
 			UserEntity testUser = new UserEntity();
 			testUser.setEmail("test@example.com");
 			testUser.setUsername("test");
-			testUser.setPassword(service.generatePassword("test123"));
+			testUser.setPassword(encoder.encode("test123"));
 			testUser.setFullName("Test");
 			testUser.addRole(testRole);
 			

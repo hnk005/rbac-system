@@ -27,31 +27,6 @@ public class UserService {
 	private final UserMapper mapper;
 	private final RoleMapper roleMapper;
 	
-	public String generateUniqueUsername(String email) {
-		String baseUsername = email.split("@")[0];
-		String generatedUsername;
-		boolean isUnique = false;
-		int attempts = 0;
-		
-		do {
-			// Append a random number (e.g., 5 digits)
-			generatedUsername = baseUsername + (int) (Math.random() * 90000) + 10000;
-			
-			if (!repository.existsByUsername(generatedUsername)) {
-				isUnique = true;
-			}
-			
-			// Add a safety break condition for infinite loops
-			if (attempts++ > 10) throw new RuntimeException("Could not generate unique username");
-		} while (!isUnique);
-		
-		return generatedUsername;
-	}
-	
-	public String generatePassword(String password) {
-		return encoder.encode(password);
-	}
-	
 	public List<UserDto> findAll() {
 		List<UserEntity> userEntities = repository.findAll();
 		
@@ -143,14 +118,9 @@ public class UserService {
 		userEntity.setEmail(dto.getEmail());
 		userEntity.setFullName(dto.getFullName());
 		
-		if (dto.getUsername() != null) {
-			boolean existUsername = repository.existsByUsername(dto.getUsername());
-			if (existUsername) {
-				throw new IllegalArgumentException("Username already exists");
-			}
-		} else {
-			String uniqueUsername = generateUniqueUsername(userEntity.getEmail());
-			dto.setUsername(uniqueUsername);
+		boolean existUsername = repository.existsByUsername(dto.getUsername());
+		if (existUsername) {
+			throw new IllegalArgumentException("Username already exists");
 		}
 		
 		userEntity.setUsername(dto.getUsername());
