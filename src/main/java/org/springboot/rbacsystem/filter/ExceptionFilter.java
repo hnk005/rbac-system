@@ -13,12 +13,9 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 @Component
 public class ExceptionFilter extends OncePerRequestFilter {
 	
-	private final HandlerExceptionResolver resolver;
-	
 	@Autowired
-	public ExceptionFilter(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
-		this.resolver = resolver;
-	}
+	@Qualifier("handlerExceptionResolver")
+	private HandlerExceptionResolver resolver;
 	
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
