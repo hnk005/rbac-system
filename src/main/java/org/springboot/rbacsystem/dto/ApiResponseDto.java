@@ -1,10 +1,10 @@
 package org.springboot.rbacsystem.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class ApiResponseDto {
 	private String url;
 	private String method;

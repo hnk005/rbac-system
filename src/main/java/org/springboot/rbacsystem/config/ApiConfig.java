@@ -65,14 +65,14 @@ public class ApiConfig {
 				}
 				
 				
-				apiList.add(new ApiResponseDto(
-						url.toString(),
-						httpMethod.name(),
-						permission.owner()
-						          .getValue(),
-						permission.action()
-						          .getValue()
-				));
+				apiList.add(ApiResponseDto.builder()
+				                          .method(httpMethod.name())
+				                          .url(url.toString())
+				                          .resourceOwner(permission.owner()
+				                                                   .getValue())
+				                          .action(permission.action()
+				                                            .getValue())
+				                          .build());
 			}
 		}
 		
