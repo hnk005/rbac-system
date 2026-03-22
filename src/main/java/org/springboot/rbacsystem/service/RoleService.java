@@ -93,18 +93,25 @@ public class RoleService {
 		roleEntity.setName(dto.getName());
 		roleEntity.setDes(dto.getDes());
 		
-		if (dto.getPermissionIds() != null && !dto.getPermissionIds()
-		                                          .isEmpty()) {
-			List<Long> permissionIds = dto.getPermissionIds();
-			List<PermissionDto> permissions = permissionService.findAllById(permissionIds);
+		if (dto.getPermissionIds() != null) {
 			
-			if (permissions.isEmpty() || permissions.size() != permissionIds.size()) {
-				throw new IllegalArgumentException("No valid permissions found for the provided role IDs");
+			if (dto.getPermissionIds()
+			       .isEmpty()) {
+				
+				roleEntity.removePermissionAll();
+			} else {
+				
+				List<Long> permissionIds = dto.getPermissionIds();
+				List<PermissionDto> permissions = permissionService.findAllById(permissionIds);
+				
+				if (permissions.isEmpty() || permissions.size() != permissionIds.size()) {
+					throw new IllegalArgumentException("No valid permissions found for the provided role IDs");
+				}
+				
+				roleEntity.addPermissions(permissions.stream()
+				                                     .map(permissionMapper::toEntity)
+				                                     .collect(Collectors.toList()));
 			}
-			
-			roleEntity.addPermissions(permissions.stream()
-			                                     .map(permissionMapper::toEntity)
-			                                     .collect(Collectors.toList()));
 		}
 		
 		repository.save(roleEntity);

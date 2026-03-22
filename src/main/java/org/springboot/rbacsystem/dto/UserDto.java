@@ -26,5 +26,5 @@ public class UserDto {
 	private String email;
 	
 	@JsonProperty(value = "user_roles")
-	private List<RoleDto> roles;
+	private List<UserRolesDto> roles;
 }

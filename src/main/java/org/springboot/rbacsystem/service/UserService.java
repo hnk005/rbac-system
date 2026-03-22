@@ -3,10 +3,7 @@ package org.springboot.rbacsystem.service;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.SQLGrammarException;
 import org.springboot.rbacsystem.constrant.RoleEnum;
-import org.springboot.rbacsystem.dto.CreateUserDto;
-import org.springboot.rbacsystem.dto.RoleDto;
-import org.springboot.rbacsystem.dto.UpdateUserDto;
-import org.springboot.rbacsystem.dto.UserDto;
+import org.springboot.rbacsystem.dto.*;
 import org.springboot.rbacsystem.entity.UserEntity;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapper;
@@ -64,7 +61,17 @@ public class UserService {
 			                                                   .map(roleMapper::toDto)
 			                                                   .toList();
 			                   UserDto userDto = mapper.toDto(userEntity);
-			                   userDto.setRoles(roles);
+			                   List<UserRolesDto> userRolesDtos = roles.stream()
+			                                                           .map(role -> {
+				                                                           UserRolesDto userRolesDto =
+						                                                           new UserRolesDto();
+				                                                           userRolesDto.setId(role.getId());
+				                                                           userRolesDto.setName(role.getName());
+				                                                           return userRolesDto;
+			                                                           })
+			                                                           .toList();
+			                   
+			                   userDto.setRoles(userRolesDtos);
 			                   return userDto;
 		                   })
 		                   .toList();
@@ -78,7 +85,17 @@ public class UserService {
 		                                .map(roleMapper::toDto)
 		                                .toList();
 		UserDto userDto = mapper.toDto(userEntity);
-		userDto.setRoles(roles);
+		
+		List<UserRolesDto> userRolesDtos = roles.stream()
+		                                        .map(role -> {
+			                                        UserRolesDto userRolesDto = new UserRolesDto();
+			                                        userRolesDto.setId(role.getId());
+			                                        userRolesDto.setName(role.getName());
+			                                        return userRolesDto;
+		                                        })
+		                                        .toList();
+		
+		userDto.setRoles(userRolesDtos);
 		return userDto;
 	}
 	
@@ -131,23 +148,30 @@ public class UserService {
 			userEntity.setUsername(dto.getUsername());
 		}
 		
-		if (dto.getRoleIds() != null && !dto.getRoleIds()
-		                                    .isEmpty()) {
-			List<Long> roleIds = dto.getRoleIds();
+		if (dto.getRoleIds() != null) {
 			
-			List<RoleDto> roles = roleService.findAllById(roleIds);
-			
-			if (roles.size() < roleIds.size()) {
-				throw new IllegalArgumentException("No valid roles found for the provided role IDs");
+			if (dto.getRoleIds()
+			       .isEmpty()) {
+				userEntity.removeRoleAll();
+			} else {
+				List<Long> roleIds = dto.getRoleIds();
+				
+				List<RoleDto> roles = roleService.findAllById(roleIds);
+				
+				if (roles.size() < roleIds.size()) {
+					throw new IllegalArgumentException("No valid roles found for the provided role IDs");
+				}
+				
+				userEntity.removeRoles(userEntity.getRoles()
+				                                 .stream()
+				                                 .toList());
+				
+				userEntity.addRoles(roles.stream()
+				                         .map(roleMapper::toEntity)
+				                         .toList());
 			}
 			
-			userEntity.removeRoles(userEntity.getRoles()
-			                                 .stream()
-			                                 .toList());
 			
-			userEntity.addRoles(roles.stream()
-			                         .map(roleMapper::toEntity)
-			                         .toList());
 		}
 		
 		repository.save(userEntity);

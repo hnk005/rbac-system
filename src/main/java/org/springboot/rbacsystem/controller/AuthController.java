@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/{version}/auth", version = "1.0")
+@RequestMapping(value = "/{version}/auth", version = "v1")
 @RequiredArgsConstructor
 public class AuthController {
 	

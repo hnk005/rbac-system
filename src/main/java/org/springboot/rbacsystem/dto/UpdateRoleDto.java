@@ -11,10 +11,9 @@ import java.util.List;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateRoleDto {
-	private final String notBlankRegex = ".*\\S.*";
 	
 	@JsonProperty
-	@Pattern(regexp = notBlankRegex, message = "Name must not be blank")
+	@Pattern(regexp = ".*\\S.*", message = "Name must not be blank")
 	@Size(min = 2, max = 50, message = "Role name must be between 2 and 50 characters long")
 	private String name;
 	

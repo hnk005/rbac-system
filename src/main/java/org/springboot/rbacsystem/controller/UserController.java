@@ -1,5 +1,6 @@
 package org.springboot.rbacsystem.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springboot.rbacsystem.constrant.Action;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/{version}/users", version = "1.0")
+@RequestMapping(value = "/{version}/users", version = "v1")
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class UserController {
 	

@@ -1,6 +1,7 @@
 package org.springboot.rbacsystem.controller;
 
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springboot.rbacsystem.constrant.Action;
 import org.springboot.rbacsystem.constrant.ResourceOwner;
@@ -16,8 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/{version}/system", version = "1.0")
+@RequestMapping(value = "/{version}/system", version = "v1")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class SystemController {
 	
 	private final SystemService service;

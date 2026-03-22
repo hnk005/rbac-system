@@ -60,11 +60,8 @@ public class ApiConfig {
 					int start = url.indexOf(prefixVersion);
 					int end = url.indexOf(prefixVersion) + prefixVersion.length();
 					
-					url.replace(start, end,
-							"v" + mappingInfo.getVersionCondition()
-							                 .getVersion()
-							                 .charAt(0)
-					);
+					url.replace(start, end, mappingInfo.getVersionCondition()
+					                                   .getVersion());
 				}
 				
 				

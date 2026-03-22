@@ -1,5 +1,6 @@
 package org.springboot.rbacsystem.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springboot.rbacsystem.constrant.Action;
@@ -14,8 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/{version}/roles", version = "1.0")
+@RequestMapping(value = "/{version}/roles", version = "v1")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class RoleController {
 	
 	private final RoleService service;
