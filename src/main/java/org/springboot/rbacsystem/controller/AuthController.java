@@ -3,6 +3,7 @@ package org.springboot.rbacsystem.controller;
 import lombok.RequiredArgsConstructor;
 import org.springboot.rbacsystem.dto.JwtResponseDto;
 import org.springboot.rbacsystem.dto.LoginDto;
+import org.springboot.rbacsystem.dto.RegisterDto;
 import org.springboot.rbacsystem.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,9 +19,14 @@ public class AuthController {
 	private final AuthService service;
 	
 	@PostMapping("/login")
-	public ResponseEntity<JwtResponseDto> authenticateUser(@RequestBody LoginDto dto) {
+	public ResponseEntity<JwtResponseDto> login(@RequestBody LoginDto dto) {
 		return ResponseEntity.ok(
 				service.login(dto)
 		);
+	}
+	
+	@PostMapping("/register")
+	public String register(@RequestBody RegisterDto dto) {
+		return service.register(dto);
 	}
 }
