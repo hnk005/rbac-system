@@ -90,9 +90,11 @@ public class RoleService {
 					"Role with name '" + dto.getName() + "' already exists");
 		}
 		
-		RoleEntity roleEntity = new RoleEntity();
-		roleEntity.setName(dto.getName());
-		roleEntity.setDes(dto.getDes());
+		RoleDto roleDto = new RoleDto();
+		roleDto.setName(dto.getName());
+		roleDto.setDes(dto.getDes());
+		
+		RoleEntity roleEntity = mapper.toEntity(roleDto);
 		
 		if (dto.getPermissionIds() != null && !dto.getPermissionIds()
 		                                          .isEmpty()) {

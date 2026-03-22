@@ -11,11 +11,11 @@ import org.springboot.rbacsystem.dto.UpdateUserDto;
 import org.springboot.rbacsystem.dto.UserDto;
 import org.springboot.rbacsystem.security.RequirePermission;
 import org.springboot.rbacsystem.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.springboot.rbacsystem.util.ApiResponseUtils.success;
 
 @RestController
 @RequestMapping(value = "/{version}/users", version = "v1")
@@ -64,12 +64,4 @@ public class UserController {
 		return success(null, "User deleted successfully");
 	}
 	
-	private <T> ApiResponseDto<T> success(T data, String message) {
-		return ApiResponseDto.<T>builder()
-		                     .status(HttpStatus.OK.value())
-		                     .message(message)
-		                     .data(data)
-		                     .timestamp(LocalDateTime.now())
-		                     .build();
-	}
 }

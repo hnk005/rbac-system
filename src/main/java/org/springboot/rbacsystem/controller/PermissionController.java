@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.springboot.rbacsystem.util.ApiResponseUtils.success;
 
 @RestController
 @RequestMapping(value = "/{version}/permissions", version = "v1")
@@ -35,12 +36,4 @@ public class PermissionController {
 		return success(service.getCurrentUserPermissions(), "Current user permissions retrieved successfully");
 	}
 	
-	private <T> ApiResponseDto<T> success(T data, String message) {
-		return ApiResponseDto.<T>builder()
-		                     .status(200)
-		                     .message(message)
-		                     .data(data)
-		                     .timestamp(LocalDateTime.now())
-		                     .build();
-	}
 }

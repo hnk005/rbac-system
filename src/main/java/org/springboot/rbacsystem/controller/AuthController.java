@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+import static org.springboot.rbacsystem.util.ApiResponseUtils.success;
 
 @RestController
 @RequestMapping(value = "/{version}/auth", version = "v1")
@@ -32,12 +32,4 @@ public class AuthController {
 		return success(null, "Register successful");
 	}
 	
-	private <T> ApiResponseDto<T> success(T data, String message) {
-		return ApiResponseDto.<T>builder()
-		                     .status(200)
-		                     .message(message)
-		                     .data(data)
-		                     .timestamp(LocalDateTime.now())
-		                     .build();
-	}
 }
