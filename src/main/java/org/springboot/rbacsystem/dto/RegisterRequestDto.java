@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RegisterDto {
+public class RegisterRequestDto {
 	@JsonProperty
 	@NotBlank(message = "Username must not be blank")
 	@Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters long")

@@ -1,14 +1,14 @@
 package org.springboot.rbacsystem.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@AllArgsConstructor
-public class JwtResponseDto {
+public class LoginResponseDto {
 	private String token;
-	private final String type = "Bearer";
+	private String type = "Bearer";
 	private String username;
 }

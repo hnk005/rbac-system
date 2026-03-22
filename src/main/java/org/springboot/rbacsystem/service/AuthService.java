@@ -21,7 +21,7 @@ public class AuthService {
 	private final JwtUtils jwtUtils;
 	private final AuthenticationManager authenticationManager;
 	
-	public JwtResponseDto login(LoginDto dto) {
+	public LoginResponseDto login(LoginRequestDto dto) {
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
 						dto.getUsername(),
@@ -33,13 +33,13 @@ public class AuthService {
 		                     .setAuthentication(authentication);
 		
 		
-		return new JwtResponseDto(
-				jwtUtils.generateJwtToken(authentication),
-				dto.getUsername()
-		);
+		return LoginResponseDto.builder()
+		                       .token(jwtUtils.generateJwtToken(authentication))
+		                       .username(authentication.getName())
+		                       .build();
 	}
 	
-	public String register(RegisterDto dto) {
+	public String register(RegisterRequestDto dto) {
 		RoleDto roleDto = roleService.findByName(RoleEnum.USER.getValue());
 		
 		return userService.create(
