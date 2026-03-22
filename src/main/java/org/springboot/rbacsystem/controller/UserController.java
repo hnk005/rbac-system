@@ -21,31 +21,31 @@ public class UserController {
 	private final UserService service;
 	
 	@GetMapping
-	@RequirePermission(owner = ResourceOwner.USER, action = Action.READ)
+	@RequirePermission(owner = ResourceOwner.SYS, action = Action.READ)
 	public List<UserDto> getAll() {
 		return service.findAll();
 	}
 	
 	@GetMapping("/{id}")
-	@RequirePermission(owner = ResourceOwner.USER, action = Action.READ)
+	@RequirePermission(owner = ResourceOwner.SYS, action = Action.READ)
 	public UserDto getIds(@PathVariable Long id) {
 		return service.findById(id);
 	}
 	
 	@PostMapping
-	@RequirePermission(owner = ResourceOwner.USER, action = Action.CREATE)
+	@RequirePermission(owner = ResourceOwner.SYS, action = Action.CREATE)
 	public String create(@Valid @RequestBody CreateUserDto dto) {
 		return service.create(dto);
 	}
 	
 	@PutMapping("/{id}")
-	@RequirePermission(owner = ResourceOwner.USER, action = Action.UPDATE)
+	@RequirePermission(owner = ResourceOwner.SYS, action = Action.UPDATE)
 	public String update(@PathVariable Long id, @Valid @RequestBody UpdateUserDto dto) {
 		return service.update(id, dto);
 	}
 	
 	@DeleteMapping
-	@RequirePermission(owner = ResourceOwner.USER, action = Action.DELETE)
+	@RequirePermission(owner = ResourceOwner.SYS, action = Action.DELETE)
 	public String delete(@RequestParam List<Long> ids) {
 		return service.delete(ids);
 	}
