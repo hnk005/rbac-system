@@ -1,5 +1,6 @@
 package org.springboot.rbacsystem.filter;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,15 +39,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
-	                                @NonNull FilterChain filterChain) throws ServletException, IOException {
+	                                @NonNull FilterChain filterChain) throws JwtException, ServletException,
+			IOException {
 		String jwt = parseJwt(request);
 		
 		if (jwt != null) {
 			
-			jwtUtils.validateJwtToken(jwt);
-			
 			String username = jwtUtils.getUserNameFromJwtToken(jwt);
-			
 			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 			
 			UsernamePasswordAuthenticationToken authentication =

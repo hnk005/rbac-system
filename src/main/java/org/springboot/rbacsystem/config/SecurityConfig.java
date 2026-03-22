@@ -30,7 +30,7 @@ public class SecurityConfig {
 	private final CustomUserDetailsService userDetailsService;
 	private final JwtAuthFilter jwtAuthFilter;
 	private final ExceptionFilter exceptionFilter;
-	private final CustomAuthenticationEntryPoint unauthorizedHandler;
+	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -71,11 +71,11 @@ public class SecurityConfig {
 						.anyRequest()
 						.authenticated()
 				)
-				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+				.exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(exceptionFilter, UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(jwtAuthFilter, ExceptionFilter.class);
+				.addFilterBefore(exceptionFilter, JwtAuthFilter.class)
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		
 		return http.build();
 	}

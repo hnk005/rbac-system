@@ -38,20 +38,23 @@ public class RoleController {
 	
 	@PostMapping
 	@RequirePermission(owner = ResourceOwner.ROLE, action = Action.CREATE)
-	public ApiResponseDto<String> create(@Valid @RequestBody CreateRoleDto dto) {
-		return success(service.create(dto), "Role created successfully");
+	public ApiResponseDto<Void> create(@Valid @RequestBody CreateRoleDto dto) {
+		service.create(dto);
+		return success(null, "Role created successfully");
 	}
 	
 	@PutMapping("/{id}")
 	@RequirePermission(owner = ResourceOwner.ROLE, action = Action.UPDATE)
 	public ApiResponseDto<String> update(@PathVariable Long id, @Valid @RequestBody UpdateRoleDto dto) {
-		return success(service.update(id, dto), "Role updated successfully");
+		service.update(id, dto);
+		return success(null, "Role updated successfully");
 	}
 	
 	@DeleteMapping
 	@RequirePermission(owner = ResourceOwner.ROLE, action = Action.DELETE)
 	public ApiResponseDto<String> delete(@RequestParam List<Long> ids) {
-		return success(service.delete(ids), "Role deleted successfully");
+		service.delete(ids);
+		return success(null, "Role deleted successfully");
 	}
 	
 	private <T> ApiResponseDto<T> success(T data, String message) {

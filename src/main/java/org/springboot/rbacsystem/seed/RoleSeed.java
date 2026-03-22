@@ -28,34 +28,34 @@ public class RoleSeed {
 	@Order(2)
 	@Transactional
 	void seedRoles() {
-		log.info("Bắt đầu kiểm tra và khởi tạo Roles...");
+		log.info("Starting to initialize Roles...");
 		
-		if (repository.count() == 0) {
-			List<PermissionEntity> aminPermissions = permissionRepository.findByNameEndingWith("*");
-			List<PermissionEntity> userPermissions = List.of(
-					permissionRepository.findByName(ResourceOwner.USER.getValue() + ":*"),
-					permissionRepository.findByName(ResourceOwner.ROLE.getValue() + ":read")
-			);
-			
-			
-			RoleEntity adminRole = new RoleEntity();
-			adminRole.setName(RoleEnum.ADMIN.getValue());
-			adminRole.setDes("Quyền quản trị viên với tất cả quyền hạn");
-			adminRole.addPermissions(aminPermissions);
-			
-			RoleEntity userRole = new RoleEntity();
-			userRole.setName(RoleEnum.USER.getValue());
-			userRole.setDes("Quyền người dùng với quyền hạn cơ bản");
-			userRole.addPermissions(userPermissions);
-			
-			repository.save(adminRole);
-			repository.save(userRole);
-			
-			log.info("Đã tự động thêm các role mặc định: Admin, User");
-		} else {
-			log.info("Roles đã tồn tại, không cần khởi tạo.");
+		if (repository.existsByName(RoleEnum.ADMIN.getValue()) || repository.existsByName(RoleEnum.USER.getValue())) {
+			log.info("Admin or User role already exists. Skipping initialization.");
+			return;
 		}
 		
-		log.info("Hoàn tất khởi tạo Roles!");
+		List<PermissionEntity> aminPermissions = permissionRepository.findByNameEndingWith("*");
+		List<PermissionEntity> userPermissions = List.of(
+				permissionRepository.findByName(ResourceOwner.USER.getValue() + ":*"),
+				permissionRepository.findByName(ResourceOwner.ROLE.getValue() + ":read")
+		);
+		
+		
+		RoleEntity adminRole = new RoleEntity();
+		adminRole.setName(RoleEnum.ADMIN.getValue());
+		adminRole.setDes("Permission for admin with full access to all resources");
+		adminRole.addPermissions(aminPermissions);
+		
+		RoleEntity userRole = new RoleEntity();
+		userRole.setName(RoleEnum.USER.getValue());
+		userRole.setDes("Permission for user with limited access to resources");
+		userRole.addPermissions(userPermissions);
+		
+		repository.save(adminRole);
+		repository.save(userRole);
+		
+		log.info("Roles initialized successfully: {}, {}", adminRole.getName(), userRole.getName());
+		log.info("Finished initializing Roles.");
 	}
 }

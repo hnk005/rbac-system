@@ -45,20 +45,23 @@ public class UserController {
 	
 	@PostMapping
 	@RequirePermission(owner = ResourceOwner.SYS, action = Action.CREATE)
-	public ApiResponseDto<String> create(@Valid @RequestBody CreateUserDto dto) {
-		return success(service.create(dto), "User created successfully");
+	public ApiResponseDto<Void> create(@Valid @RequestBody CreateUserDto dto) {
+		service.create(dto);
+		return success(null, "User created successfully");
 	}
 	
 	@PutMapping("/{id}")
 	@RequirePermission(owner = ResourceOwner.SYS, action = Action.UPDATE)
-	public ApiResponseDto<String> update(@PathVariable Long id, @Valid @RequestBody UpdateUserDto dto) {
-		return success(service.update(id, dto), "User updated successfully");
+	public ApiResponseDto<Void> update(@PathVariable Long id, @Valid @RequestBody UpdateUserDto dto) {
+		service.update(id, dto);
+		return success(null, "User updated successfully");
 	}
 	
 	@DeleteMapping
 	@RequirePermission(owner = ResourceOwner.SYS, action = Action.DELETE)
-	public ApiResponseDto<String> delete(@RequestParam List<Long> ids) {
-		return success(service.delete(ids), "User deleted successfully");
+	public ApiResponseDto<Void> delete(@RequestParam List<Long> ids) {
+		service.delete(ids);
+		return success(null, "User deleted successfully");
 	}
 	
 	private <T> ApiResponseDto<T> success(T data, String message) {

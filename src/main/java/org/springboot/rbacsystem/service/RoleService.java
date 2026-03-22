@@ -82,7 +82,7 @@ public class RoleService {
 		return roleDto;
 	}
 	
-	public String create(CreateRoleDto dto) {
+	public void create(CreateRoleDto dto) {
 		boolean existRoleEntity = repository.existsByName(dto.getName());
 		
 		if (existRoleEntity) {
@@ -109,10 +109,9 @@ public class RoleService {
 		}
 		
 		repository.save(roleEntity);
-		return "Success";
 	}
 	
-	public String update(Long id, UpdateRoleDto dto) {
+	public void update(Long id, UpdateRoleDto dto) {
 		final RoleEntity roleEntity = repository.findById(id)
 		                                        .orElseThrow(() -> new ServiceArgumentNotValidException("role_id",
 				                                        "Role not found with" +
@@ -148,10 +147,9 @@ public class RoleService {
 		}
 		
 		repository.save(roleEntity);
-		return "Success";
 	}
 	
-	public String delete(List<Long> ids) {
+	public void delete(List<Long> ids) {
 		List<RoleEntity> roleEntities = repository.findAllById(ids);
 		
 		if (roleEntities.isEmpty()) {
@@ -161,6 +159,5 @@ public class RoleService {
 		roleEntities.forEach(RoleEntity::clearPermissionAll);
 		
 		repository.deleteAll(roleEntities);
-		return "Success";
 	}
 }

@@ -57,7 +57,8 @@ public class UserService {
 	
 	public UserDto findById(Long id) throws IllegalArgumentException {
 		UserEntity userEntity = repository.findById(id)
-		                                  .orElseThrow(() -> new ServiceArgumentNotValidException("user_id", "User not" +
+		                                  .orElseThrow(() -> new ServiceArgumentNotValidException("user_id", "User " +
+				                                  "not" +
 				                                  " " +
 				                                  "found with id: " + id));
 		List<RoleDto> roles = userEntity.getRoles()
@@ -110,26 +111,28 @@ public class UserService {
 		return userDto;
 	}
 	
-	public String create(CreateUserDto dto) throws ServiceArgumentNotValidException, SQLGrammarException {
+	public void create(CreateUserDto dto) throws ServiceArgumentNotValidException, SQLGrammarException {
 		
 		boolean existUserEntity = repository.existsByEmail(dto.getEmail());
 		if (existUserEntity) {
 			throw new ServiceArgumentNotValidException(CreateUserDto.Fields.email, "Email already exists");
 		}
 		
-		UserEntity userEntity = new UserEntity();
-		userEntity.setEmail(dto.getEmail());
-		userEntity.setFullName(dto.getFullName());
+		UserDto userDto = new UserDto();
+		userDto.setEmail(dto.getEmail());
+		userDto.setFullName(dto.getFullName());
 		
 		boolean existUsername = repository.existsByUsername(dto.getUsername());
 		if (existUsername) {
 			throw new ServiceArgumentNotValidException(CreateUserDto.Fields.username, "Username already exists");
 		}
 		
-		userEntity.setUsername(dto.getUsername());
+		userDto.setUsername(dto.getUsername());
 		
 		String passwordHash = encoder.encode(dto.getPassword());
-		userEntity.setPassword(passwordHash);
+		userDto.setPassword(passwordHash);
+		
+		UserEntity userEntity = mapper.toEntity(userDto);
 		
 		if (dto.getRoleIds() != null && !dto.getRoleIds()
 		                                    .isEmpty()) {
@@ -146,10 +149,9 @@ public class UserService {
 		}
 		
 		repository.save(userEntity);
-		return "Success";
 	}
 	
-	public String update(Long id, UpdateUserDto dto) throws ServiceArgumentNotValidException, SQLGrammarException {
+	public void update(Long id, UpdateUserDto dto) throws ServiceArgumentNotValidException, SQLGrammarException {
 		UserEntity userEntity = repository.findById(id)
 		                                  .orElseThrow(() -> new ServiceArgumentNotValidException("id", "User not " +
 				                                  "found with id: " + id));
@@ -199,10 +201,9 @@ public class UserService {
 		}
 		
 		repository.save(userEntity);
-		return "Success";
 	}
 	
-	public String delete(List<Long> ids) throws ServiceArgumentNotValidException, SQLGrammarException {
+	public void delete(List<Long> ids) throws ServiceArgumentNotValidException, SQLGrammarException {
 		List<UserEntity> userEntities = repository.findAllById(ids);
 		
 		if (userEntities.isEmpty()) {
@@ -212,6 +213,5 @@ public class UserService {
 		userEntities.forEach(UserEntity::clearRoles);
 		
 		repository.deleteAll(userEntities);
-		return "Success";
 	}
 }

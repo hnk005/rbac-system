@@ -50,31 +50,7 @@ public class RoleEntity extends BaseEntity {
 		}
 	}
 	
-	public void removePermission(PermissionEntity permission) {
-		this.permissions.remove(permission);
-		permission.getRoles()
-		          .remove(this);
-	}
-	
-	public void removePermissions(List<PermissionEntity> permissions) {
-		for (PermissionEntity permission : permissions) {
-			this.removePermission(permission);
-		}
-	}
-	
 	public void clearPermissionAll() {
 		this.permissions.clear();
-	}
-	
-	public void removeUser(UserEntity user) {
-		this.users.remove(user);
-		user.getRoles()
-		    .remove(this);
-	}
-	
-	public void removeUsers(List<UserEntity> users) {
-		for (UserEntity user : users) {
-			this.removeUser(user);
-		}
 	}
 }

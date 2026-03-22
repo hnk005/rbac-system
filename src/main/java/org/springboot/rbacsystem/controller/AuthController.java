@@ -28,7 +28,8 @@ public class AuthController {
 	
 	@PostMapping("/register")
 	public ApiResponseDto<String> register(@Valid @RequestBody RegisterRequestDto dto) {
-		return success(service.register(dto), "Register successful");
+		service.register(dto);
+		return success(null, "Register successful");
 	}
 	
 	private <T> ApiResponseDto<T> success(T data, String message) {

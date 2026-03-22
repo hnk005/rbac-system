@@ -7,6 +7,7 @@ import org.springboot.rbacsystem.util.JwtUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -22,28 +23,31 @@ public class AuthService {
 	private final AuthenticationManager authenticationManager;
 	
 	public LoginResponseDto login(LoginRequestDto dto) {
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
-						dto.getUsername(),
-						dto.getPassword()
-				)
-		);
-		
-		SecurityContextHolder.getContext()
-		                     .setAuthentication(authentication);
-		
-		
-		return LoginResponseDto.builder()
-		                       .token(jwtUtils.generateJwtToken(authentication))
-		                       .type("Bearer")
-		                       .username(authentication.getName())
-		                       .build();
+		try {
+			Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(
+							dto.getUsername(),
+							dto.getPassword()
+					)
+			);
+			
+			SecurityContextHolder.getContext()
+			                     .setAuthentication(authentication);
+			
+			return LoginResponseDto.builder()
+			                       .token(jwtUtils.generateJwtToken(authentication))
+			                       .type("Bearer")
+			                       .username(authentication.getName())
+			                       .build();
+		} catch (AuthenticationException e) {
+			throw new IllegalArgumentException("Invalid username or password");
+		}
 	}
 	
-	public String register(RegisterRequestDto dto) {
+	public void register(RegisterRequestDto dto) {
 		RoleDto roleDto = roleService.findByName(RoleEnum.USER.getValue());
 		
-		return userService.create(
+		userService.create(
 				CreateUserDto.builder()
 				             .email(dto.getEmail())
 				             .username(dto.getUsername())

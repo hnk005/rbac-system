@@ -23,7 +23,7 @@ public class PermissionSeed {
 	@Order(1)
 	@Transactional
 	public void seedPermissions() {
-		log.info("Bắt đầu kiểm tra và khởi tạo Permissions...");
+		log.info("Starting to initialize Permissions...");
 		
 		for (ResourceOwner owner : ResourceOwner.values()) {
 			for (Action action : Action.values()) {
@@ -34,18 +34,14 @@ public class PermissionSeed {
 					
 					PermissionEntity newPermission = new PermissionEntity();
 					newPermission.setName(permissionName);
-					newPermission.setDes("Cho phép hành động '" + action.getValue()
-							+ "'"
-							+ " "
-							+ "trên tài nguyên '"
-							+ owner.name() + "'");
+					newPermission.setDes("Permission for " + owner.getValue() + " - " + action.getValue());
 					
 					repository.save(newPermission);
-					log.info("Đã tự động thêm quyền mới: {}", permissionName);
+					log.info("Created permission: {}", permissionName);
 				}
 			}
 		}
 		
-		log.info("Hoàn tất khởi tạo Permissions!");
+		log.info("Finished initializing Permissions.");
 	}
 }

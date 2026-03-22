@@ -1,6 +1,5 @@
 package org.springboot.rbacsystem.security;
 
-import lombok.RequiredArgsConstructor;
 import org.springboot.rbacsystem.constrant.Action;
 import org.springboot.rbacsystem.constrant.ResourceOwner;
 import org.springframework.security.core.Authentication;
@@ -9,8 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-@Service("rbaControl")
-@RequiredArgsConstructor
+@Service
 public class RoleBasedAccessControlService {
 	
 	public boolean hasAccess(ResourceOwner owner, Action action) {
