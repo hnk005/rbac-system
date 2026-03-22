@@ -1,9 +1,11 @@
 package org.springboot.rbacsystem.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class ApiRequestDto {
+@Builder
+public class SystemApiResponseDto {
 	private String url;
 	private String method;
 	private String resourceOwner;

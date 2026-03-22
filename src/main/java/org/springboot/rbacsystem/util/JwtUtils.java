@@ -1,6 +1,8 @@
 package org.springboot.rbacsystem.util;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ public class JwtUtils {
 		
 		UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
 		
-		if(userPrincipal == null) {
+		if (userPrincipal == null) {
 			return null;
 		}
 		
@@ -35,7 +37,7 @@ public class JwtUtils {
 		           .setIssuedAt(new Date())
 		           .setExpiration(new Date((new Date()).getTime() + properties.getExpirationTime()))
 		           .signWith(key(), SignatureAlgorithm.HS256)
-		           .compact();  
+		           .compact();
 	}
 	
 	private Key key() {
@@ -43,23 +45,18 @@ public class JwtUtils {
 	}
 	
 	public String getUserNameFromJwtToken(String token) {
-		return Jwts.parserBuilder().setSigningKey(key()).build()
-		           .parseClaimsJws(token).getBody().getSubject();
+		return Jwts.parserBuilder()
+		           .setSigningKey(key())
+		           .build()
+		           .parseClaimsJws(token)
+		           .getBody()
+		           .getSubject();
 	}
 	
-	public boolean validateJwtToken(String authToken) {
-		try {
-			Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(authToken);
-			return true;
-		} catch (MalformedJwtException e) {
-			log.error("Token JWT không đúng định dạng: {}", e.getMessage());
-		} catch (ExpiredJwtException e) {
-			log.error("Token JWT đã hết hạn: {}", e.getMessage());
-		} catch (UnsupportedJwtException e) {
-			log.error("Token JWT không được hỗ trợ: {}", e.getMessage());
-		} catch (IllegalArgumentException e) {
-			log.error("Chuỗi claims JWT bị trống: {}", e.getMessage());
-		}
-		return false;
+	public void validateJwtToken(String authToken) throws JwtException {
+		Jwts.parserBuilder()
+		    .setSigningKey(key())
+		    .build()
+		    .parseClaimsJws(authToken);
 	}
 }

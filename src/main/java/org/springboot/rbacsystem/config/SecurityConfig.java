@@ -1,7 +1,9 @@
 package org.springboot.rbacsystem.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springboot.rbacsystem.filter.ExceptionFilter;
 import org.springboot.rbacsystem.filter.JwtAuthFilter;
+import org.springboot.rbacsystem.security.CustomAuthenticationEntryPoint;
 import org.springboot.rbacsystem.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +31,8 @@ public class SecurityConfig {
 	private static final int strength = 12;
 	private final CustomUserDetailsService userDetailsService;
 	private final JwtAuthFilter jwtAuthFilter;
+	private final ExceptionFilter exceptionFilter;
+	private final CustomAuthenticationEntryPoint unauthorizedHandler;
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -54,7 +58,6 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(
 								"/api/{version}/auth/**",
-								"/api/{version}/roles/**",
 								"/v2/api-docs",
 								"/v3/api-docs",
 								"/v3/api-docs/**",
@@ -70,9 +73,11 @@ public class SecurityConfig {
 						.anyRequest()
 						.authenticated()
 				)
+				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(exceptionFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(jwtAuthFilter, ExceptionFilter.class);
 		
 		return http.build();
 	}

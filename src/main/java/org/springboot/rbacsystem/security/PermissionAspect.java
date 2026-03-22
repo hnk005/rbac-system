@@ -1,10 +1,8 @@
-package org.springboot.rbacsystem.aop;
+package org.springboot.rbacsystem.security;
 
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springboot.rbacsystem.security.RequirePermission;
-import org.springboot.rbacsystem.security.RoleBasedAccessControlService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +18,7 @@ public class PermissionAspect {
 		boolean hasAccess = rbaControl.hasAccess(requirePermission.owner(), requirePermission.action());
 		
 		if (!hasAccess) {
-			throw new AccessDeniedException("Bạn không có quyền thực hiện hành động này!");
+			throw new AccessDeniedException("Insufficient permissions");
 		}
 	}
 }

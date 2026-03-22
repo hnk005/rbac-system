@@ -9,6 +9,6 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginResponseDto {
 	private String token;
-	private String type = "Bearer";
+	private String type;
 	private String username;
 }

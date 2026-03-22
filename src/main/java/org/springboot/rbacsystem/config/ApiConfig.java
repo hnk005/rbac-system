@@ -2,7 +2,7 @@ package org.springboot.rbacsystem.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springboot.rbacsystem.dto.ApiResponseDto;
+import org.springboot.rbacsystem.dto.SystemApiResponseDto;
 import org.springboot.rbacsystem.security.RequirePermission;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
@@ -25,10 +25,10 @@ public class ApiConfig {
 	
 	@EventListener(ApplicationReadyEvent.class)
 	@Bean
-	List<ApiResponseDto> apiResponseDtos() {
+	List<SystemApiResponseDto> apiResponseDtos() {
 		log.info("Bắt đầu thu thập thông tin API...");
 		
-		List<ApiResponseDto> apiList = new ArrayList<>();
+		List<SystemApiResponseDto> apiList = new ArrayList<>();
 		
 		Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
 		
@@ -65,14 +65,14 @@ public class ApiConfig {
 				}
 				
 				
-				apiList.add(ApiResponseDto.builder()
-				                          .method(httpMethod.name())
-				                          .url(url.toString())
-				                          .resourceOwner(permission.owner()
-				                                                   .getValue())
-				                          .action(permission.action()
-				                                            .getValue())
-				                          .build());
+				apiList.add(SystemApiResponseDto.builder()
+				                                .method(httpMethod.name())
+				                                .url(url.toString())
+				                                .resourceOwner(permission.owner()
+				                                                         .getValue())
+				                                .action(permission.action()
+				                                                  .getValue())
+				                                .build());
 			}
 		}
 		

@@ -31,18 +31,22 @@ public class RoleSeed {
 		log.info("Bắt đầu kiểm tra và khởi tạo Roles...");
 		
 		if (repository.count() == 0) {
-			List<PermissionEntity> aminPermission = permissionRepository.findByNameEndingWith("*");
-			PermissionEntity userPermission = permissionRepository.findByName(ResourceOwner.USER.getValue() + ":*");
+			List<PermissionEntity> aminPermissions = permissionRepository.findByNameEndingWith("*");
+			List<PermissionEntity> userPermissions = List.of(
+					permissionRepository.findByName(ResourceOwner.USER.getValue() + ":*"),
+					permissionRepository.findByName(ResourceOwner.ROLE.getValue() + ":read")
+			);
+			
 			
 			RoleEntity adminRole = new RoleEntity();
 			adminRole.setName(RoleEnum.ADMIN.getValue());
 			adminRole.setDes("Quyền quản trị viên với tất cả quyền hạn");
-			adminRole.addPermissions(aminPermission);
+			adminRole.addPermissions(aminPermissions);
 			
 			RoleEntity userRole = new RoleEntity();
 			userRole.setName(RoleEnum.USER.getValue());
 			userRole.setDes("Quyền người dùng với quyền hạn cơ bản");
-			userRole.addPermission(userPermission);
+			userRole.addPermissions(userPermissions);
 			
 			repository.save(adminRole);
 			repository.save(userRole);

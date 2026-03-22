@@ -5,6 +5,7 @@ import org.hibernate.exception.SQLGrammarException;
 import org.springboot.rbacsystem.dto.*;
 import org.springboot.rbacsystem.entity.RoleEntity;
 import org.springboot.rbacsystem.entity.UserEntity;
+import org.springboot.rbacsystem.exception.ServiceArgumentNotValidException;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springboot.rbacsystem.mapper.user.UserMapper;
 import org.springboot.rbacsystem.repository.UserRepository;
@@ -56,7 +57,9 @@ public class UserService {
 	
 	public UserDto findById(Long id) throws IllegalArgumentException {
 		UserEntity userEntity = repository.findById(id)
-		                                  .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+		                                  .orElseThrow(() -> new ServiceArgumentNotValidException("user_id", "User not" +
+				                                  " " +
+				                                  "found with id: " + id));
 		List<RoleDto> roles = userEntity.getRoles()
 		                                .stream()
 		                                .map(roleMapper::toDto)
@@ -84,7 +87,7 @@ public class UserService {
 		UserEntity userEntity = repository.findByUsername(username);
 		
 		if (userEntity == null) {
-			throw new IllegalArgumentException("Current user not found");
+			throw new ServiceArgumentNotValidException("current_user", "Current user not found");
 		}
 		
 		List<RoleDto> roles = userEntity.getRoles()
@@ -107,11 +110,11 @@ public class UserService {
 		return userDto;
 	}
 	
-	public String create(CreateUserDto dto) throws IllegalArgumentException, SQLGrammarException {
+	public String create(CreateUserDto dto) throws ServiceArgumentNotValidException, SQLGrammarException {
 		
 		boolean existUserEntity = repository.existsByEmail(dto.getEmail());
 		if (existUserEntity) {
-			throw new IllegalArgumentException("Email already exists");
+			throw new ServiceArgumentNotValidException(CreateUserDto.Fields.email, "Email already exists");
 		}
 		
 		UserEntity userEntity = new UserEntity();
@@ -120,7 +123,7 @@ public class UserService {
 		
 		boolean existUsername = repository.existsByUsername(dto.getUsername());
 		if (existUsername) {
-			throw new IllegalArgumentException("Username already exists");
+			throw new ServiceArgumentNotValidException(CreateUserDto.Fields.username, "Username already exists");
 		}
 		
 		userEntity.setUsername(dto.getUsername());
@@ -134,7 +137,9 @@ public class UserService {
 			List<RoleEntity> roles = roleService.findAllById(roleIds);
 			
 			if (roles.isEmpty() || roles.size() != roleIds.size()) {
-				throw new IllegalArgumentException("No valid roles found for the provided user");
+				throw new ServiceArgumentNotValidException(CreateUserDto.Fields.roleIds, "No valid roles found for " +
+						"the" +
+						" provided user");
 			}
 			
 			userEntity.addRoles(roles);
@@ -144,15 +149,16 @@ public class UserService {
 		return "Success";
 	}
 	
-	public String update(Long id, UpdateUserDto dto) throws IllegalArgumentException {
+	public String update(Long id, UpdateUserDto dto) throws ServiceArgumentNotValidException, SQLGrammarException {
 		UserEntity userEntity = repository.findById(id)
-		                                  .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+		                                  .orElseThrow(() -> new ServiceArgumentNotValidException("id", "User not " +
+				                                  "found with id: " + id));
 		
 		if (dto.getEmail() != null && !dto.getEmail()
 		                                  .equals(userEntity.getEmail())) {
 			boolean existEmail = repository.existsByEmail(dto.getEmail());
 			if (existEmail) {
-				throw new IllegalArgumentException("Email already exists");
+				throw new ServiceArgumentNotValidException(UpdateUserDto.Fields.email, "Email already exists");
 			}
 			userEntity.setEmail(dto.getEmail());
 		}
@@ -182,7 +188,10 @@ public class UserService {
 				List<RoleEntity> roles = roleService.findAllById(roleIds);
 				
 				if (roles.size() != roleIds.size()) {
-					throw new IllegalArgumentException("No valid roles found for the provided role IDs");
+					throw new ServiceArgumentNotValidException(UpdateUserDto.Fields.roleIds, "No valid roles found " +
+							"for" +
+							" the" +
+							" provided user");
 				}
 				
 				userEntity.addRoles(roles);
@@ -193,11 +202,11 @@ public class UserService {
 		return "Success";
 	}
 	
-	public String delete(List<Long> ids) throws IllegalArgumentException {
+	public String delete(List<Long> ids) throws ServiceArgumentNotValidException, SQLGrammarException {
 		List<UserEntity> userEntities = repository.findAllById(ids);
 		
 		if (userEntities.isEmpty()) {
-			throw new IllegalArgumentException("No users found for the provided IDs");
+			throw new ServiceArgumentNotValidException("user_ids", "No users found for the provided ids");
 		}
 		
 		userEntities.forEach(UserEntity::clearRoles);

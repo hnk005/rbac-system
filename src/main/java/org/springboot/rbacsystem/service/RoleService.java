@@ -7,6 +7,7 @@ import org.springboot.rbacsystem.dto.RoleDto;
 import org.springboot.rbacsystem.dto.UpdateRoleDto;
 import org.springboot.rbacsystem.entity.PermissionEntity;
 import org.springboot.rbacsystem.entity.RoleEntity;
+import org.springboot.rbacsystem.exception.ServiceArgumentNotValidException;
 import org.springboot.rbacsystem.mapper.permission.PermissionMapper;
 import org.springboot.rbacsystem.mapper.role.RoleMapper;
 import org.springboot.rbacsystem.repository.RoleRepository;
@@ -46,7 +47,10 @@ public class RoleService {
 	
 	public RoleDto findById(Long id) {
 		RoleEntity roleEntity = repository.findById(id)
-		                                  .orElseThrow(() -> new RuntimeException("Role not found"));
+		                                  .orElseThrow(() -> new ServiceArgumentNotValidException("role_id", "Role " +
+				                                  "not" +
+				                                  " " +
+				                                  "found"));
 		
 		List<PermissionDto> permissionDtos = roleEntity.getPermissions()
 		                                               .stream()
@@ -64,7 +68,7 @@ public class RoleService {
 		RoleEntity roleEntity = repository.findByName(name);
 		
 		if (roleEntity == null) {
-			throw new RuntimeException("Role not found with name: " + name);
+			throw new ServiceArgumentNotValidException("role_name", "Role not found with name: " + name);
 		}
 		
 		List<PermissionDto> permissionDtos = roleEntity.getPermissions()
@@ -82,7 +86,8 @@ public class RoleService {
 		boolean existRoleEntity = repository.existsByName(dto.getName());
 		
 		if (existRoleEntity) {
-			throw new IllegalArgumentException("Role with name '" + dto.getName() + "' already exists");
+			throw new ServiceArgumentNotValidException(CreateRoleDto.Fields.name,
+					"Role with name '" + dto.getName() + "' already exists");
 		}
 		
 		RoleEntity roleEntity = new RoleEntity();
@@ -95,7 +100,9 @@ public class RoleService {
 			List<PermissionEntity> permissions = permissionService.findAllById(permissionIds);
 			
 			if (permissions.isEmpty() || permissions.size() != permissionIds.size()) {
-				throw new IllegalArgumentException("No valid permissions found for the provided role");
+				throw new ServiceArgumentNotValidException(CreateRoleDto.Fields.permissionIds, "No valid permissions" +
+						" " +
+						"found for the provided role");
 			}
 			
 			roleEntity.addPermissions(permissions);
@@ -107,9 +114,10 @@ public class RoleService {
 	
 	public String update(Long id, UpdateRoleDto dto) {
 		final RoleEntity roleEntity = repository.findById(id)
-		                                        .orElseThrow(() -> new IllegalArgumentException("Role not found with" +
-				                                        " " +
-				                                        "id: " + id));
+		                                        .orElseThrow(() -> new ServiceArgumentNotValidException("role_id",
+				                                        "Role not found with" +
+						                                        " " +
+						                                        "id: " + id));
 		
 		if (dto.getName() != null && !dto.getName()
 		                                 .isBlank()) {
@@ -131,7 +139,8 @@ public class RoleService {
 				List<PermissionEntity> permissions = permissionService.findAllById(permissionIds);
 				
 				if (permissions.size() != permissionIds.size()) {
-					throw new IllegalArgumentException("No valid permissions found for the provided role IDs");
+					throw new ServiceArgumentNotValidException(UpdateRoleDto.Fields.permissionIds, "No valid " +
+							"permissions found for the provided role IDs");
 				}
 				
 				roleEntity.addPermissions(permissions);
@@ -146,7 +155,7 @@ public class RoleService {
 		List<RoleEntity> roleEntities = repository.findAllById(ids);
 		
 		if (roleEntities.isEmpty()) {
-			throw new IllegalArgumentException("No valid roles found for the provided IDs");
+			throw new ServiceArgumentNotValidException("role_ids", "No valid roles found for the provided IDs");
 		}
 		
 		roleEntities.forEach(RoleEntity::clearPermissionAll);

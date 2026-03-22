@@ -35,6 +35,7 @@ public class AuthService {
 		
 		return LoginResponseDto.builder()
 		                       .token(jwtUtils.generateJwtToken(authentication))
+		                       .type("Bearer")
 		                       .username(authentication.getName())
 		                       .build();
 	}
